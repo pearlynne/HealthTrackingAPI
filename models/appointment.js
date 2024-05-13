@@ -6,7 +6,8 @@ const apptSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
-  date: { type: Date, required: true }, //Use ISO date for now
+	// Use ISO date for now
+  date: { type: Date, required: true }, 
   // time: { type: Date, required: true },
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
