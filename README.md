@@ -1,4 +1,4 @@
-# <p align="center"> 330 Final Project </p>
+# <p align="center"> 330 Final Project <br> Mental Health Behavioral Tracking </p>
 
 ## Table of contents
 1. [Description of Scenario and Problem](#description)
@@ -15,7 +15,9 @@
 
 **What problem your project seeks to solve.**
 
-One challenge in therapy is the gap between sessions, where users struggle to recall and discuss pertinent events from the past week(s). This project hopes to address this by enabling users to engage in brief daily records, not only aiding in recall but also helps users identify triggers and patterns. Healthcare providers can then leverage this data to offer targeted insights during sessions.
+- One challenge in therapy is the gap between sessions, where users struggle to recall and discuss pertinent events from the past week(s). 
+- This project hopes to address this by enabling users to engage in brief daily records, not only aiding in recall but also helps users identify triggers and patterns. 
+- Healthcare providers can then leverage this data to offer targeted insights during sessions.
 
 ## General Design <a name="generaldesign"></a>
 The API utilizes MongoDB collections to manage user and provider functionalities. 
@@ -63,7 +65,8 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - **updateAppt(userId, apptObj):** Only Healthcare Providers can update appointments.
 - **deleteAppt(userId, apptObj):** Only Healthcare Providers can delete appointments.
 
-<details> <summary> Routes: (see <a href="#4-crud-routes">CRUD Routes</a> for detailed description) </summary> 
+<details>
+<summary><h3>Brief Routes: (see <a href="#4-crud-routes">CRUD Routes</a> for detailed description)</h3></summary> 
 
 - Login
 	- POST Signup, Login
@@ -80,15 +83,15 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- POST appointments
 	- GET appointments, appointments by ID
 	- Only healthcare providers (requires authorization):
-			- PUT appointments by ID
-			- DELETE appointments by ID
+		- PUT appointments by ID
+		- DELETE appointments by ID
 - Middleware
 	- *isAuthenticated* - should the user has a valid jwt token during login.
 	- *IsAuthorized* - should verify if the user is a Healthcare Provider, else return 403 forbidden error.
 	- *Error handling* - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
 </details> 
 
-#### Nice to haves
+### Nice to haves
 - Front end forms for users, behavioral tracking reports, and apppointments 
 
 ## Clear and direct call-outs<a name="callouts"></a>
