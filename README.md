@@ -36,7 +36,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - bcrypt for password hashing
 - jsonwebtoken for password tokens
 
-### Initial Set up
+### Initial Set Up (To add)
 
 ### Models
 - **Users:** Username (unique, required), email (unique, required), password (required), name (required), role [Patient/Healthcare Provider], Healthcare Provider’s userId
@@ -180,15 +180,15 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- [ ]  `DELETE /appointments/:id`
 
 **Week 8**
-- [ ]  Create Jest tests for authorization and authentication
-- [ ]  Create Jest tests for user route
-- [ ]  Create Jest tests for records route
-- [ ]  Create Jest tests for appointment route
+- [ ] Create Jest tests for authorization and authentication
+- [ ] Create Jest tests for user route
+- [ ] Create Jest tests for records route
+- [ ] Create Jest tests for appointment route
+- [ ] Test routes
+- [ ] Revise routes/daos/models 
 
 **Week 9** 
- - [ ] Create frontend forms (would be nice)
- - [ ] Test routes
- - [ ] Create demo 
- - [ ] Complete README
- - [ ] Complete self-eval
-
+- [ ] Create demo 
+- [ ] Complete README
+- [ ] Complete self-eval
+- [ ] Create frontend forms (TBD/Nice to have)
