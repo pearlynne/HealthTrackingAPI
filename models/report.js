@@ -15,4 +15,6 @@ const reportSchema = new mongoose.Schema({
   medRxn: { type: String },
 });
 
+reportSchema.index({ journalEntry: "text", medRxn: "text" });
+
 module.exports = mongoose.model("reports", reportSchema);
