@@ -1,0 +1,202 @@
+# <p align="center"> 330 Project </p>
+
+## Table of contents
+1. [Description of Scenario and Problem](#description)
+2. [General Design](#generaldesign)
+3. [Dependencies](#builtwith) 
+4. [Clear and direct call-outs](#callouts)
+5. [Timeline and Plan](#tasks)
+
+## Description of Scenario and Problem <a name="description"></a>
+
+**Scenario your project is operating in.**
+- This project/API operates within the healthtech sector, catering to both therapy users and individuals managing their mental health independently.
+- Its goal is to allow users to track their mental well-being offline, facilitating the identification of patterns.
+
+**What problem your project seeks to solve.**
+
+One challenge in therapy is the gap between sessions, where users struggle to recall and discuss pertinent events from the past week(s). This project hopes to address this by enabling users to engage in brief daily records, streamlining their 'homework' process. This consistent tracking not only aids in recall but also helps users identify triggers and patterns. Healthcare providers can then leverage this data to offer targeted insights during sessions.
+
+## General Design <a name="generaldesign"></a>
+Te API utilizes MongoDB collections to manage user and provider functionalities. 
+- Users and physicians can sign up, login, and logout using dedicated routes, with authentication required for accessing other API endpoints.
+- Authorization features ensure that healthcare providers have access to their patients/users' data, including the ability to update and delete appointments.
+- Other API endpoints include
+	- **User Route:** Users can change their passwords and provider (if any).
+	- **Behavioral Tracking Reports Route:** Users can post, update, get, and delete their daily behavioral tracking reports. Healthcare providers have access to all reports from their patients/users.
+	- **Appointment Route:** Users can post and get their appointments, while only healthcare providers can update or delete appointments. Providers can also retrieve all appointments for their patients/users.
+
+## Dependencies <a name="builtwith"></a>
+**Technical Components**
+- Express
+- MongoDBs
+- Jests for unit tests
+- bcrypt for password hashing
+- jsonwebtoken for password tokens
+
+**Models**
+- **Users:** Username (unique, required), email (unique, required), password (required), role [patient/Healthcare Providers], name (required), Healthcare Provider’s userId
+  - Assume person has only 1 Healthcare Provider assigned for now
+- **Behavior Tracking Report:** Date (required), Mood rating (required), Symptom tracker (Inattentiveness, hyperactivity, impulsitivity), Journaling, Medication reactions
+  - Index for text search
+- **Appointment management:** Date (required), Time, userId (required), Healthcare Provider's userId (required)
+
+**DAOs**
+
+User
+- **createUser(userObj):** should store a user record
+- **getUser(email):** should get a user record using their email
+- **updateUserPassword(userId, password):** should update the user's password field
+- **updateUserProvider(userId, providerId)**: should update user’s Healthcare Provider
+
+Report
+- **createReport(userId, reportObj):** should create a behavioral report for the given user
+- **getReport(userId, reportId):** should get behavioral report for userId and noteId (_id)
+- **getUserReports(userId):** should get all behavioral reports for userId
+- **getUserReportsBySearch(userId, searchTerms):** should get all behavioral reports for userId based on search terms
+- **getUserReportStats(userId):** should get stats for mood ratings and symptom tracking from all behavioral reports for userId
+
+Appointment:
+- **createAppt(userId, apptObj):** Users/Healthcare Providers can create new appointments for therapy sessions or consultations.
+- **getAppt(userId, apptObj):** Users/Healthcare Providers can view their upcoming appointments and details such as date, time, location, and purpose.
+- **updateAppt(userId, apptObj):** Only Healthcare Providers can reschedule or cancel appointments.
+- **deleteAppt(userId, apptObj):** Only Healthcare Providers can delete appointments.
+
+<details>
+<summary> Routes: (see <a href="#4-crud-routes">CRUD Routes</a> for detailed description) </summary>
+
+- Login
+	- POST Signup, Login
+	- PUT Change Password
+- Users (requires authentication): If user is logged in,
+	- GET users (requires authorization) of healthcare provider, user by ID
+	- PUT provider
+- Reports (requires authentication): If the user is logged in,
+	- POST report
+	- GET report, report stats, report search, report by ID
+	- PUT report by ID
+	- DELETE report by ID
+- Appointments (requires authentication): If the user is logged in,
+	- POST appointments
+	- GET appointments, appointments by ID
+	- Only healthcare providers (requires authorization):
+			- PUT appointments by ID
+			- DELETE appointments by ID
+- Middleware
+	- **isAuthenticated** - should the user has a valid jwt token during login.
+	- **IsAuthorized** - should verify if the user is a Healthcare Provider, else return 403 forbidden error.
+	- **Error handling** - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
+</details>
+<br>
+
+**Nice to haves:**
+- Front end forms for users, behavioral tracking reports, and apppointments 
+
+## Clear and direct call-outs<a name="callouts"></a>
+#### 1. Authentication & Authorization in Middleware
+- Authentication: Check if the user has a valid jwt token during login, else return 400 error.
+- Authorization: Verify if the user is a Healthcare Provider, else return 403 forbidden error.
+- Error handling - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
+#### 2. Indexes for performance and uniqueness when reasonable
+- User: Index for username
+- Behavioral Tracking Reports: Index for text search
+#### 3. At least one of text search, aggregations, and lookups
+- Text search in Behavioral Tracking Reports
+- Aggregated statistics of mood ratings in Behavioral Tracking Reports
+#### 4. CRUD Routes<a name="#4-crud-routes"></a> 
+**Login**
+- `POST /auth/signup` - Store user with their name, email, and encrypted password.
+	- Return 400 error if email has been used.
+- `POST /auth/login` -  Find the user with the provided email. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token.
+	- Return 400 error if token does not match.
+- `PUT /auth/password` - If the user is logged in, store the incoming password using their userId
+	- Return 400 error if request fails
+- `POST /auth/logout` -
+	- Return 400 error if request fails
+	
+**Users**
+- `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers)
+- `GET /users/:id` (requires authentication) - returns user information with provided id
+- `PUT /users/:id/provider` (requires authentication) - If user is log in, should update user’s provider ID
+
+**Reports** (requires authentication): If the user is logged in,
+- `POST /reports` -  it should store the incoming report along with their userId.
+- `GET /reports` - it should get all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
+- `GET /reports/stats` - it should get an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from all patients/users
+- `GET /reports/search` - it should get reports with that search term. If Healthcare Provider, should get array of reports with that search term from all patients/users
+- `GET /reports/:id` - it should get the report with the provided id and that has their userId. If Healthcare Provider, should get specified report.
+- `PUT /reports/:id` - it should update the report with the provided id and that has their userId
+- `DELETE /reports/:id` - it should delete report with provided id from specified user.
+
+**Appointments** (requires authentication)
+- `POST /appointments` - it should store the appointment information
+- `GET /appointments` - it should get all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users
+- `GET /appointments/:id` - it should get the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment.
+- `PUT /appointments/:id` -  Only Healthcare Providers are allowed to update the appointment with the provided id and that has their userId
+- `DELETE /appointments/:id` - Only Healthcare Providers deletes appointment with provided id from specified user
+#### 5. Jest tests: 
+- Authentication, authorization, CRUD operations for Login, Users, Appointments, and Reports
+
+ 
+## Timeline + Plan <a name="tasks"></a>  
+**Week 6**
+- [ ]  Create packagge.json
+- [ ]  Create models for users, logs, notes
+- [ ]  Create Route for Login
+    - [ ]  `POST /auth/signup`
+    - [ ]  `POST /auth/login`
+    - [ ]  `PUT /auth/password`
+    - [ ]  `POST /auth/logout`
+- [ ]  Create Middleware
+    - [ ]  **isAuthenticated**
+    - [ ]  **IsAuthorized**
+    - [ ]  **Error handling**
+- [ ]  Create DAO for user
+    - [ ]  **createUser(userObj)**
+    - [ ]  **getUser(email)**
+    - [ ]  **updateUserPassword(userId, password)**
+    - [ ]  **updateUserProvider(userId, providerId)**
+- [ ]  Create DAO for reports
+    - [ ]  **createReport(userId, reportObj)**
+    - [ ]  **getReport(userId, reportId)**
+    - [ ]  **getUserReports(userId)**
+    - [ ]  **getUserReportsBySearch(userId, searchTerms)**
+    - [ ]  **getUserReportStats(userId)**
+- [ ]  Create route for Users
+    - [ ]  `GET /users`
+    - [ ]  `GET /users/:id`
+    - [ ]  `PUT /users/:id/provider`
+
+**Week 7**
+- [ ]  Create route for Logs (requires authentication)
+	- [ ]  `POST /reports`
+	- [ ]  `GET /reports`
+	- [ ]  `GET /reports/:id`
+	- [ ]  `GET /reports/stats`
+	- [ ]  `GET /reports/search`
+	- [ ]  `PUT /reports/:id`
+	- [ ]  `DELETE /reports/:id`
+- [ ]  Create DAO for appointments:
+	- [ ]  **createAppt(userId, apptObj)**
+	- [ ]  **getAppt(userId, apptObj)**
+	- [ ]  **updateAppt(userId, apptObj)**
+	- [ ]  **deleteAppt(userId, apptObj)**
+- [ ]  Create route for appointments (requires authentication)
+	- [ ]  `POST /appointments`
+	- [ ]  `GET /appointments`
+	- [ ]  `GET /appointments/:id`
+	- [ ]  `PUT /appointments/:id`
+	- [ ]  `DELETE /appointments/:id`
+
+**Week 8**
+- [ ]  Create Jest tests for user route
+- [ ]  Create Jest tests for logs route
+- [ ]  Create Jest tests for appointment route
+
+**Week 9** 
+ - [ ] Create frontend (would be nice)
+ - [ ] Test routes
+ - [ ] Create demo 
+ - [ ] Complete README
+ - [ ] Complete self-eval
+
