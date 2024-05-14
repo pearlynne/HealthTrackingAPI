@@ -31,7 +31,8 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ## Technical Components <a name="builtwith"></a>
 ### Dependencies
 - Express
-- MongoDBs
+- MongoDB
+- Mongoose
 - Jests for unit tests
 - bcrypt for password hashing
 - jsonwebtoken for password tokens
@@ -41,29 +42,29 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ### Models
 - **Users:** Username (unique, required), email (unique, required), password (required), name (required), role [Patient/Healthcare Provider], Healthcare Provider’s userId
   - Assume each user has only one Healthcare Provider assigned for now
-- **Behavior Tracking Report:** Date (required), Mood rating (required), Symptom tracker (Inattentiveness, hyperactivity, impulsitivity), Journaling, Medication reactions
+- **Behavior Tracking Report:** userId (required, ref), Date (required), Mood rating (required), Symptom tracker (Inattentiveness, hyperactivity, impulsitivity), Journaling, Medication reactions
   - Index for text search
-- **Appointment management:** Date (required), Time, userId (required), Healthcare Provider's userId (required)
+- **Appointment management:** userId (required, ref), Date (required), Time, userId (required), Healthcare Provider's userId (required, ref)
 
 ### DAOs
 #### User
-- **createUser(userObj):** store a user record
+- **createUser(userObj):** create a user record
 - **getUser(email):** get a user record using their email
 - **updateUserPassword(userId, password):** update the user's password field
-- **updateUserProvider(userId, providerId)**: update user’s Healthcare Provider
+- **updateUserProvider(userId, providerId)**: update user’s healthcare provider
 
 #### Report
 - **createReport(userId, reportObj):** create a behavioral report for the given user
-- **getReport(userId, reportId):** get specific behavioral report for the given user
-- **getUserReports(userId):** get all behavioral reports for the given user
-- **getUserReportsBySearch(userId, searchTerms):** get all behavioral reports for the given user based on search terms
-- **getUserReportStats(userId):** get stats for mood ratings and symptom tracking from all behavioral reports for the given user
+- **getReportById(userId, reportId):** get a specific behavioral report for the given user
+- **getReports(userId isProvider):** get all behavioral reports for the given user
+- **getReportsBySearchTerm(userId, searchTerms):** get all behavioral reports for the given user based on search terms
+- **getReportStats(userId):** get stats for mood ratings and symptom tracking from all behavioral reports for the given user
 
 #### Appointment
-- **createAppt(userId, apptObj):** Users/Healthcare Providers can create new appointments. 
-- **getAppt(userId, apptObj):** Users/Healthcare Providers can view their appointments and details such as date, time, location.
-- **updateAppt(userId, apptObj):** Only Healthcare Providers can update appointments.
-- **deleteAppt(userId, apptObj):** Only Healthcare Providers can delete appointments.
+- **createAppt(userId, date, providerId):** create new appointments for given user 
+- **getAppt(userId, isProvider):** get appointments for a given user
+- **updateAppt(userId, providerId, apptObj):** update appointments of a given user for a healthcare provider
+- **deleteAppt(userId, providerId):** delete appointments of a given user for a healthcare provider
 
 <details>
 <summary><h3>Brief Routes: (see <a href="#4-crud-routes">CRUD Routes</a> for detailed description)</h3></summary> 
@@ -100,16 +101,16 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - Authorization: Verify if the user is a Healthcare Provider, else return 403 forbidden error.
 - Error handling - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
 ### 2. Indexes for performance and uniqueness when reasonable
-- User: Index for username
+- User: Index for email
 - Behavioral Tracking Reports: Index for text search
 ### 3. At least one of text search, aggregations, and lookups
 - Text search in Behavioral Tracking Reports
 - Aggregated statistics of mood ratings in Behavioral Tracking Reports
 ### 4. CRUD Routes<a name="#4-crud-routes"></a> 
 **Login**
-- `POST /auth/signup` - Store user with their name, email, and encrypted password.
+- `POST /auth/signup` - Store user with their name, username, email, and encrypted password.
 	- Return 400 error if email has been used.
-- `POST /auth/login` -  Find the user with the provided email. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token.
+- `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token.
 	- Return 400 error if token does not match.
 - `PUT /auth/password` - If the user is logged in, store the incoming password using their userId
 	- Return 400 error if request fails
@@ -143,10 +144,6 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 **Week 6**
 - [ ]  Create package.json
 - [ ]  Create models for users, logs, notes
-- [ ]  Create routes for Login
-    - [ ]  `POST /auth/signup`, `POST /auth/login`, `POST /auth/logout`
-    - [ ]  `PUT /auth/password`
-- [ ]  Create Middleware for **isAuthenticated**, **IsAuthorized**, **Error handling**
 - [ ]  Create DAO for user
     - [ ]  **createUser(userObj)**
     - [ ]  **getUser(email)**
@@ -158,6 +155,10 @@ The API utilizes MongoDB collections to manage user and provider functionalities
     - [ ]  **getUserReports(userId)**
     - [ ]  **getUserReportsBySearch(userId, searchTerms)**
     - [ ]  **getUserReportStats(userId)**
+- [ ]  Create routes for Login/Auth
+    - [ ]  `POST /auth/signup`, `POST /auth/login`, `POST /auth/logout`
+    - [ ]  `PUT /auth/password`
+- [ ]  Create Middleware for **isAuthenticated**, **IsAuthorized** 
 - [ ]  Create route for Users
     - [ ]  `GET /users`, `GET /users/:id`
     - [ ]  `PUT /users/:id/provider` 
