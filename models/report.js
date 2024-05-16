@@ -13,8 +13,15 @@ const reportSchema = new mongoose.Schema({
   impulsitivity: { type: Number, required: true },
   journalEntry: { type: String },
   medRxn: { type: String },
+	providerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
 });
 
 reportSchema.index({ journalEntry: "text", medRxn: "text" });
+
+reportSchema.index({ providerId: 1 });
 
 module.exports = mongoose.model("reports", reportSchema);
