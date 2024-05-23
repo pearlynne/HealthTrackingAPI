@@ -1,11 +1,26 @@
 # <p align="center"> 330 Final Project <br> Mental Health Behavioral Tracking </p>
 
+## Updates <a name="updates"></a>
+### Completed: 
+- Model schemas for user, appointment, and reports
+- DAO methods for user, appointment, and reports
+- CRUD routes for auth, user, appointments, and reports
+- Middleware for authorization and authentication
+- Revision of routes
+
+### Working on \[see <a href="#timeline--plan">timeline</a>\] : 
+- Testing routes with Postman (40%; left with appointments and report routes)
+- Completion of Jest tests for all routes
+- 
+
+
 ## Table of contents
-1. [Description of Scenario and Problem](#description)
-2. [General Design](#generaldesign)
-3. [Technical Components](#builtwith) 
-4. [Clear and direct call-outs](#callouts)
-5. [Timeline and Plan](#tasks)
+1. [Updates](#updates)
+2. [Description of Scenario and Problem](#description)
+3. [General Design](#generaldesign)
+4. [Technical Components](#builtwith) 
+5. [Clear and direct call-outs](#callouts)
+6. [Timeline and Plan](#tasks)
 
 ## Description of Scenario and Problem <a name="description"></a>
 
@@ -108,30 +123,30 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - Aggregated statistics of mood ratings in Behavioral Tracking Reports
 ### 4. CRUD Routes<a name="#4-crud-routes"></a> 
 **Login**
-- `POST /auth/signup` - Store user with their name, username, email, and encrypted password.
+- *Tested* `POST /auth/signup` - Store user with their name, username, email, and encrypted password. 
 	- Return 400 error if email has been used.
-- `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token.
+- *Tested* `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. 
 	- Return 400 error if token does not match.
-- `PUT /auth/password` - If the user is logged in, store the incoming password using their userId
+- *Tested* `PUT /auth/password` - If the user is logged in, store the incoming password using their userId. 
 	- Return 400 error if request fails
-- `POST /auth/logout`
+- *Tested* `POST /auth/logout` 
 	
 **Users**
-- `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers)
-- `GET /users/:id` (requires authentication) - returns user information with provided id
-- `PUT /users/:id/provider` (requires authentication) update user’s provider ID
+- *Tested* `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers) 
+- *Tested but should verify edge cases*`GET /users/:id` (requires authentication) - returns user information with provided id 
+- *Tested* `PUT /users/:id/provider` (requires authentication) - update user’s provider ID. 
 
 **Reports** (requires authentication): If the user is logged in,
 - `POST /reports` - store report along with their userId.
 - `GET /reports` - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
-- `GET /reports/stats` - returns an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from all patients/users
+- `GET /reports/stats` - returns an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from all patients/users. If userId is in search params, healthcare providers should get an array 
 - `GET /reports/search` - returns reports with that search term. If Healthcare Provider, should get array of reports with that search term from all patients/users
 - `GET /reports/:id` - returns the report with the provided id and that has their userId. If Healthcare Provider, should get specified report.
 - `PUT /reports/:id` - updates the report with the provided id and that has their userId
 - `DELETE /reports/:id` - deletes report with provided id from specified user.
 
 **Appointments** (requires authentication): If the user is logged in,
-- `POST /appointments` - stores the appointment information
+- *Testing* `POST /appointments`(requires authorization) -  Healthcare Providers can create and store the appointment information 
 - `GET /appointments` - returns all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users
 - `GET /appointments/:id` - returns the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment.
 - `PUT /appointments/:id`(requires authorization) -  Healthcare Providers can update the appointment with the provided id and that has their userId
@@ -142,43 +157,45 @@ The API utilizes MongoDB collections to manage user and provider functionalities
  
 ## Timeline + Plan <a name="tasks"></a>  
 **Week 6**
-- [ ]  Create package.json
-- [ ]  Create models for users, logs, notes
-- [ ]  Create DAO for user
-    - [ ]  **createUser(userObj)**
-    - [ ]  **getUser(email)**
-    - [ ]  **updateUserPassword(userId, password)**
-    - [ ]  **updateUserProvider(userId, providerId)**
-- [ ]  Create DAO for reports
-    - [ ]  **createReport(userId, reportObj)**
-    - [ ]  **getReport(userId, reportId)**
-    - [ ]  **getUserReports(userId)**
-    - [ ]  **getUserReportsBySearch(userId, searchTerms)**
-    - [ ]  **getUserReportStats(userId)**
-- [ ]  Create routes for Login/Auth
-    - [ ]  `POST /auth/signup`, `POST /auth/login`, `POST /auth/logout`
-    - [ ]  `PUT /auth/password`
-- [ ]  Create Middleware for **isAuthenticated**, **IsAuthorized** 
-- [ ]  Create route for Users
-    - [ ]  `GET /users`, `GET /users/:id`
-    - [ ]  `PUT /users/:id/provider` 
+- [x]  Create package.json
+- [x]  Create models for users, logs, notes
+- [x]  Create DAO for user
+    - [x]  **createUser(userObj)**
+    - [x]  **getUser(email)**
+    - [x]  **updateUserPassword(userId, password)**
+    - [x]  **updateUserProvider(userId, providerId)**
+- [x]  Create DAO for reports
+    - [x]  **createReport(userId, reportObj)**
+    - [x]  **getReport(userId, reportId)**
+    - [x]  **getUserReports(userId)**
+    - [x]  **getUserReportsBySearch(userId, searchTerms)**
+    - [x]  **getUserReportStats(userId)**
+		- [x]  **updateReportById(userId, apptObj)**
+		- [x]  **deleteReportById(userId, apptObj)**
+- [x]  Create routes for Login/Auth
+    - [x]  `POST /auth/signup`, `POST /auth/login`, `POST /auth/logout`
+    - [x]  `PUT /auth/password`
+- [x]  Create Middleware for **isAuthenticated**, **IsAuthorized** 
+- [x]  Create route for Users
+    - [x]  `GET /users`, `GET /users/:id`
+    - [x]  `PUT /users/:id/provider` 
 
 **Week 7**
-- [ ]  Create route for Logs (requires authentication)
-	- [ ]  `POST /reports`
-	- [ ]  `GET /reports`, `GET /reports/:id`, `GET /reports/stats`, `GET /reports/search`
-	- [ ]  `PUT /reports/:id`
-	- [ ]  `DELETE /reports/:id`
-- [ ]  Create DAO for appointments:
-	- [ ]  **createAppt(userId, apptObj)**
-	- [ ]  **getAppt(userId, apptObj)**
-	- [ ]  **updateAppt(userId, apptObj)**
-	- [ ]  **deleteAppt(userId, apptObj)**
-- [ ]  Create route for appointments (requires authentication)
-	- [ ]  `POST /appointments`
-	- [ ]  `GET /appointments`, `GET /appointments/:id`
-	- [ ]  `PUT /appointments/:id`
-	- [ ]  `DELETE /appointments/:id`
+- [x]  Create route for Logs (requires authentication)
+	- [x]  `POST /reports`
+	- [x]  `GET /reports`, `GET /reports/:id`, `GET /reports/stats`, `GET /reports/search`
+	- [x]  `PUT /reports/:id`
+	- [x]  `DELETE /reports/:id`
+- [x]  Create DAO for appointments:
+	- [x]  **createAppt(userId, apptObj)**
+	- [x]  **getAppt(userId, apptObj)**
+	- [x]  **updateAppt(userId, apptObj)**
+	- [x]  **deleteAppt(userId, apptObj)**
+- [x]  Create route for appointments (requires authentication)
+	- [x]  `POST /appointments`
+	- [x]  `GET /appointments`, `GET /appointments/:id`
+	- [x]  `PUT /appointments/:id`
+	- [x]  `DELETE /appointments/:id`
 
 **Week 8**
 - [ ] Create Jest tests for authorization and authentication
@@ -187,6 +204,9 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - [ ] Create Jest tests for appointment route
 - [ ] Test routes
 - [ ] Revise routes/daos/models 
+- [ ] (New addition) Error handling for id
+- [ ] (New addition) Deal with Date issues, isProvider, edge cases 
+- [ ] (New addition) Create middleware for patient is not providers'
 
 **Week 9** 
 - [ ] Create demo 
