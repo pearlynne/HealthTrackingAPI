@@ -12,31 +12,33 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   if (userId !== req.params.id) {
     res.status(409).send("Conflicting data");
     // Confirm if this is the right status code
-  }
-  try {
-    const user = await userDAO.getUser(email);
-    res.json(user);
-  } catch (e) {
-    next(e);
+  } else {
+    try {
+      const user = await userDAO.getUser(email);
+      res.json(user);
+    } catch (e) {
+      next(e);
+    }
   }
 });
 
 //Get All Users
 router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
-  const providerId = req.user.providerId;
+  // const providerId = req.user.providerId;
 
   //Case: Another provider is getting all users of another provider
-  if (userId !== providerId) {
-    res.status(409).send("Conflicting data");
-    // Confirm if this is the right status code
-  }
-  try {
-    const users = await userDAO.getUsersOfProvider(providerId);
-    res.json(users);
-  } catch (e) {
-    next(e);
-  }
+  // if (userId !== providerId) {
+  //   res.status(409).send("Conflicting data");
+  //   // Confirm if this is the right status code
+  // } else {
+    try {
+      const users = await userDAO.getUsersOfProvider(userId);
+      res.json(users);
+    } catch (e) {
+      next(e);
+    }
+  // }
 });
 
 router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
@@ -45,20 +47,18 @@ router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
 
   if (!providerId || !userId || JSON.stringify(req.body) === "{}") {
     res.status(404).send("New provider ID needed");
-  }
-
-  if (userId !== req.userId._id) {
+  } else if (userId !== req.userId._id) {
     res.status(403).send("Forbidden");
-  }
-
-  try {
-    const updatedProvider = await userDAO.updateUserProvider(
-      req.userId._id,
-      providerId
-    );
-    res.json(updatedProvider);
-  } catch (e) {
-    next(e);
+  } else {
+    try {
+      const updatedProvider = await userDAO.updateUserProvider(
+        req.userId._id,
+        providerId
+      );
+      res.json(updatedProvider);
+    } catch (e) {
+      next(e);
+    }
   }
 });
 

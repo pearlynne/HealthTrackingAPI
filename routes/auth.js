@@ -19,9 +19,9 @@ router.post("/signup", async (req, res, next) => {
     res.status(404).send("Incomplete information");
   } else {
     try {
-      const { name, email, password, roles, providerId } = req.body;
+      const { name, email, password, roles, providerId } = req.body; 
       const hash = await bcrypt.hash(password, 5);
-      // Verify if we can pass undefined parameter
+      // Verify if we can pass undefined parameter; if provider, no provider id yet
       const newUser = await userDAO.signup(
         name,
         email,
@@ -42,29 +42,30 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("Email/passwword needed");
-  }
-  try {
-    const user = await userDAO.getUser(email);
-    if (!user) {
-      res.status(404).send("User account does not exist");
+    res.status(404).send("Email/password needed");
+  } else {
+    try {
+      const user = await userDAO.getUser(email); 
+      if (!user) {
+        res.status(404).send("User account does not exist");
+      }
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (passwordMatch) {
+        let data = {
+          email: user.email,
+          roles: user.roles,
+          providerId: user.providerId,
+          _id: user._id,
+        };
+        token = jwt.sign(data, secret);
+        // can I pass this? as req.headers.authorization = 'Bearer ' + token; next()
+        res.json({ token });
+      } else {
+        res.status(401).send("Password does not match");
+      }
+    } catch (e) {
+      next(e);
     }
-    const passwordMatch = await bcrypt.compare(user.password, password);
-    if (passwordMatch) {
-      let data = {
-        email: user.email,
-        roles: user.roles,
-        providerId: user.providerId,
-        _id: user._id,
-      };
-      token = jwt.sign(data, secret);
-      // can I pass this? as req.headers.authorization = 'Bearer ' + token; next()
-      res.json({ token });
-    } else {
-      res.status(401).send("Password does not match");
-    }
-  } catch (e) {
-    next(e);
   }
 });
 
@@ -83,19 +84,19 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
   if (!password || JSON.stringify(req.body) === "{}") {
     res.status(404).send("New password needed");
-  }
-  try {
-    const newHash = await bcrypt.hash(password, 5);
-    const updatedPassword = await userDAO.updateUserPassword(
-      req.userId._id,
-      newHash
-    );
-    res.json(updatedPassword);
-  } catch (e) {
-    next(e);
+  } else {
+    try {
+      const newHash = await bcrypt.hash(password, 5);
+      const updatedPassword = await userDAO.updateUserPassword(
+        req.user._id,
+        newHash
+      );
+      res.json(updatedPassword);
+    } catch (e) {
+      next(e);
+    }
   }
 });
-
 
 router.post("/logout", isAuthenticated, async (req, res, next) => {
   res.sendStatus(404);

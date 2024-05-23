@@ -2,7 +2,7 @@ const { Router } = require("express");
 const router = Router({ mergeParams: true });
 
 const reportDAO = require("../daos/report");
-const { isAuthenticated, isProvider } = require("../middleware/middleware");
+const { isAuthenticated } = require("../middleware/middleware");
 
 // POST /reports - store report along with their userId.
 router.post("/", isAuthenticated, async (req, res, next) => {
@@ -149,3 +149,6 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
     }
   }
 });
+
+
+module.exports = router;
