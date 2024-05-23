@@ -2,25 +2,32 @@
 
 ## Updates <a name="updates"></a>
 ### Completed: 
+- Express server 
+- Mongo Connection
 - Model schemas for user, appointment, and reports
 - DAO methods for user, appointment, and reports
 - CRUD routes for auth, user, appointments, and reports
 - Middleware for authorization and authentication
 - Revision of routes
 
-### Working on \[see <a href="#timeline--plan">timeline</a>\] : 
-- Testing routes with Postman (40%; left with appointments and report routes)
-- Completion of Jest tests for all routes
-- 
+### Working on [see timeline](#tasks) : 
+- Creating collection and testing routes on Postman (40%; left with appointments and report routes)
+- Jest tests for all routes
+- Demo practice
+- Self-eval in README 
 
 
 ## Table of contents
 1. [Updates](#updates)
-2. [Description of Scenario and Problem](#description)
-3. [General Design](#generaldesign)
-4. [Technical Components](#builtwith) 
-5. [Clear and direct call-outs](#callouts)
-6. [Timeline and Plan](#tasks)
+2. [Self-eval](#selfeval)
+3. [Description of Scenario and Problem](#description)
+4. [General Design](#generaldesign)
+5. [Technical Components](#builtwith) 
+6. [Clear and direct call-outs](#callouts)
+7. [Timeline and Plan](#tasks)
+
+## Self-evaluation <a name="selfeval"></a>
+TBD
 
 ## Description of Scenario and Problem <a name="description"></a>
 
@@ -155,8 +162,30 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - Authentication, authorization, CRUD operations for Login, Users, Appointments, and Reports
 
  
-## Timeline + Plan <a name="tasks"></a>  
-**Week 6**
+## Timeline + Plan <a name="tasks"></a>
+
+### In Progress
+**Week 8**
+- [ ] Create Jest tests for authorization and authentication
+- [ ] Create Jest tests for user route
+- [ ] Create Jest tests for records route
+- [ ] Create Jest tests for appointment route
+- [ ] Test routes
+- [ ] Revise routes/daos/models 
+- [ ] (New addition) Error handling for id
+- [ ] (New addition) Deal with Date issues, isProvider, edge cases 
+- [ ] (New addition) Create middleware for patient is not providers'
+
+**Week 9** 
+- [ ] Create demo 
+- [ ] Complete README
+- [ ] Complete self-eval
+- [ ] Create frontend forms (TBD/Nice to have)
+
+### Completed  
+<details>
+<summary><b>Week 6</b></summary>
+
 - [x]  Create package.json
 - [x]  Create models for users, logs, notes
 - [x]  Create DAO for user
@@ -179,8 +208,11 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - [x]  Create route for Users
     - [x]  `GET /users`, `GET /users/:id`
     - [x]  `PUT /users/:id/provider` 
+</details>
 
-**Week 7**
+<details>
+<summary><b>Week 7</b></summary>
+
 - [x]  Create route for Logs (requires authentication)
 	- [x]  `POST /reports`
 	- [x]  `GET /reports`, `GET /reports/:id`, `GET /reports/stats`, `GET /reports/search`
@@ -196,20 +228,4 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- [x]  `GET /appointments`, `GET /appointments/:id`
 	- [x]  `PUT /appointments/:id`
 	- [x]  `DELETE /appointments/:id`
-
-**Week 8**
-- [ ] Create Jest tests for authorization and authentication
-- [ ] Create Jest tests for user route
-- [ ] Create Jest tests for records route
-- [ ] Create Jest tests for appointment route
-- [ ] Test routes
-- [ ] Revise routes/daos/models 
-- [ ] (New addition) Error handling for id
-- [ ] (New addition) Deal with Date issues, isProvider, edge cases 
-- [ ] (New addition) Create middleware for patient is not providers'
-
-**Week 9** 
-- [ ] Create demo 
-- [ ] Complete README
-- [ ] Complete self-eval
-- [ ] Create frontend forms (TBD/Nice to have)
+</details>
