@@ -10,11 +10,10 @@
 - Middleware for authorization and authentication
 - Revision of routes
 
-### Working on [[see timeline](#tasks)] : 
-- Creating collection and testing routes on Postman (40%; left with appointments and report routes)
+### Working on [see [timeline](#tasks) for breakdown]: 
+- Creating demo collection for presentation and testing routes on Postman (40%; left with appointments and report routes)
 - Develop test utils for Jest test
-- Create Jest tests for all routes
-- Demo practice
+- Create Jest tests for all routes 
 - Self-eval in README 
 
 
