@@ -10,9 +10,10 @@
 - Middleware for authorization and authentication
 - Revision of routes
 
-### Working on [see timeline](#tasks) : 
+### Working on [[see timeline](#tasks)] : 
 - Creating collection and testing routes on Postman (40%; left with appointments and report routes)
-- Jest tests for all routes
+- Develop test utils for Jest test
+- Create Jest tests for all routes
 - Demo practice
 - Self-eval in README 
 
@@ -166,6 +167,8 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 
 ### In Progress
 **Week 8**
+- [ ] (New addition) Review Jest tests setup
+- [ ] (New addition) Review Jest tests utils
 - [ ] Create Jest tests for authorization and authentication
 - [ ] Create Jest tests for user route
 - [ ] Create Jest tests for records route
@@ -173,7 +176,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - [ ] Test routes
 - [ ] Revise routes/daos/models 
 - [ ] (New addition) Error handling for id
-- [ ] (New addition) Deal with Date issues, isProvider, edge cases 
+- [ ] (New addition) Review with Date issues, isProvider, edge cases 
 - [ ] (New addition) Create middleware for patient is not providers'
 
 **Week 9** 
