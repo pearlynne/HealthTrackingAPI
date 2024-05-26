@@ -4,7 +4,7 @@ const router = Router({ mergeParams: true });
 const appointmentDAO = require("../daos/appointment");
 const userDAO = require("../daos/user")
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
-const appointment = require("../models/appointment");
+
 
 // POST /appointments - stores the appointment information
 router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
@@ -86,13 +86,13 @@ router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const appointmentId = req.params.id;
   const appointmentObj = req.body; //should just be the date
   try {
-		//if their appointment
-			const isAppointment = await appointmentDAO.getAppointmentById(appointmentId, user._id, true);
-			if (!isAppointment){
-				res
-				.status(403)
-				.send("You can only update appointments for yourself or your patients");
-			}
+		//if their appointment; covered in dao
+			// const isAppointment = await appointmentDAO.getAppointmentById(appointmentId, user._id, true);
+			// if (!isAppointment){
+			// 	res
+			// 	.status(403)
+			// 	.send("You can only update appointments for yourself or your patients");
+			// }
     const updatedAppointment = await appointmentDAO.updateAppointment(
       appointmentId,
       user._id,

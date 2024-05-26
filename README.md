@@ -3,7 +3,7 @@
 ## Updates <a name="updates"></a>
 ### Completed: 
 - Express server 
-- Mongo Connection
+- Mongo connection
 - Model schemas for user, appointment, and reports
 - DAO methods for user, appointment, and reports
 - CRUD routes for auth, user, appointments, and reports
@@ -12,7 +12,7 @@
 
 ### Working on [see [timeline](#tasks) for breakdown]: 
 - Creating demo collection for presentation and testing routes on Postman (40% complete; left with appointments and report routes)
-- Create Jest tests for all routes (5% completev)
+- Create Jest tests for all routes (5% completed)
 - Review test utils for Jest test
 - Self-eval in README 
 
