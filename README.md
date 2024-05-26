@@ -11,9 +11,9 @@
 - Revision of routes
 
 ### Working on [see [timeline](#tasks) for breakdown]: 
-- Creating demo collection for presentation and testing routes on Postman (40%; left with appointments and report routes)
-- Develop test utils for Jest test
-- Create Jest tests for all routes 
+- Creating demo collection for presentation and testing routes on Postman (40% complete; left with appointments and report routes)
+- Create Jest tests for all routes (5% completev)
+- Review test utils for Jest test
 - Self-eval in README 
 
 
