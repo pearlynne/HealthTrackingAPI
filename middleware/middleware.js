@@ -7,16 +7,14 @@ const userDAO = require("../daos/user");
 const isAuthenticated = async (req, res, next) => {
   // How to set bearer token without Postman?
   const bearerToken = req.headers.authorization;
-	console.log(bearerToken)
   if (!bearerToken) {
     res.status(401).send("No token");
   } else {
     const tokenString = bearerToken.split(" ")[1];
     try {
       const decoded = jwt.verify(tokenString, secret);
-			console.log(decoded)
       if (decoded) {
-        req.user = decoded;
+        req.user = decoded; 
         next();
       }
     } catch (e) {
@@ -27,9 +25,9 @@ const isAuthenticated = async (req, res, next) => {
 };
 
 const isProvider = async (req, res, next) => {
-  const email = req.body.email;
+  const email = req.user.email;
   try {
-    const user = await userDAO.getUser(email);
+    const user = await userDAO.getUser(email); 
     if (user.roles.includes("provider")) {
       next();
     } else {
