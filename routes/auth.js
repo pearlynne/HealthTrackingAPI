@@ -16,7 +16,7 @@ router.post("/signup", async (req, res, next) => {
     !req.body.name ||
     JSON.stringify(req.body) === "{}"
   ) {
-    res.status(404).send("Incomplete information");
+    res.status(400).send("Incomplete information");
   } else {
     try {
       const { name, email, password, roles, providerId } = req.body; 
@@ -42,23 +42,23 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("Email/password needed");
+    res.status(400).send("Email/password needed");
   } else {
     try {
       const user = await userDAO.getUser(email); 
       if (!user) {
-        res.status(404).send("User account does not exist");
+        res.status(401).send("User account does not exist");
       }
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (passwordMatch) {
         let data = {
+					name: user.name,
           email: user.email,
           roles: user.roles,
           providerId: user.providerId,
           _id: user._id,
         };
-        token = jwt.sign(data, secret);
-        // can I pass this? as req.headers.authorization = 'Bearer ' + token; next()
+        token = jwt.sign(data, secret); 
         res.json({ token });
       } else {
         res.status(401).send("Password does not match");
@@ -83,7 +83,7 @@ router.post("/login", async (req, res, next) => {
 router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
   if (!password || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("New password needed");
+    res.status(400).send("New password needed");
   } else {
     try {
       const newHash = await bcrypt.hash(password, 5);
@@ -98,8 +98,8 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
   }
 });
 
-router.post("/logout", isAuthenticated, async (req, res, next) => {
-  res.sendStatus(404);
+router.post("/logout", async (req, res, next) => {  
+	res.sendStatus(404);
 });
 
 module.exports = router;
