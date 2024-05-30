@@ -5,7 +5,8 @@ const appointmentDAO = require("../daos/appointment");
 const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
-// POST /appointments - stores the appointment information
+// POST /appointments
+// Healthcare provider can create appointments
 router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const patientId = req.body.userId;
@@ -49,7 +50,9 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
   }
 });
 
-// GET /appointments - returns all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users
+// GET /appointments 
+// Provider users should get array of appointments from all patients/users
+// Patient users should get array of own appointments
 router.get("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
@@ -69,8 +72,9 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// GET /appointments/:id - returns the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment.
-
+// GET /appointments/:id 
+// Provider users should get information from appointment id
+// Patient users should get information from appointment id
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
@@ -93,7 +97,8 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// PUT /appointments/:id (requires authorization) -  Healthcare Providers can update the appointment with the provided id and that has their userId
+// PUT /appointments/:id
+//  Provider users can update the appointment with the appointment id
 router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
@@ -122,16 +127,10 @@ router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
       next(e);
     }
   }
-  //if their appointment; covered in dao
-  // const isAppointment = await appointmentDAO.getAppointmentById(appointmentId, user._id, true);
-  // if (!isAppointment){
-  // 	res
-  // 	.status(403)
-  // 	.send("You can only update appointments for yourself or your patients");
-  // }
 });
 
-// DELETE /appointments/:id (requires authorization)  - Healthcare Providers can delete appointment with provided id from specified use
+// DELETE /appointments/:id 
+// Provider users can delete appointment with appointment id
 router.delete("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
