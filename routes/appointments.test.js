@@ -45,73 +45,73 @@ describe("Appointments routes", () => {
   };
 
   /** Before login **/
-  // describe("Before login", () => {
-  //   describe("GET / appointments", () => {
-  //     it("should send 401 without a token", async () => {
-  //       const res = await request(server).get("/appointments").send();
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //     it("should send 401 with a bad token", async () => {
-  //       const res = await request(server)
-  //         .get("/appointments")
-  //         .set("Authorization", "Bearer BAD")
-  //         .send();
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //   });
-  //   describe("GET / appointments/:id", () => {
-  //     it("should send 401 without a token", async () => {
-  //       const res = await request(server).get("/appointments/123").send();
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //     it("should send 401 with a bad token", async () => {
-  //       const res = await request(server)
-  //         .get("/appointments/123")
-  //         .set("Authorization", "Bearer BAD")
-  //         .send();
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //   });
-  // 	describe("POST / appointments", () => {
-  //     it("should send 401 without a token", async () => {
-  //       const res = await request(server).post("/appointments/").send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //     it("should send 401 with a bad token", async () => {
-  //       const res = await request(server)
-  //         .post("/appointments/")
-  //         .set("Authorization", "Bearer BAD")
-  //         .send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //   });
-  // 	describe("PUT / appointments/:id", () => {
-  //     it("should send 401 without a token", async () => {
-  //       const res = await request(server).put("/appointments/123").send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //     it("should send 401 with a bad token", async () => {
-  //       const res = await request(server)
-  //         .put("/appointments/123")
-  //         .set("Authorization", "Bearer BAD")
-  //         .send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //   });
-  // 	describe("DELETE / appointments/:id", () => {
-  //     it("should send 401 without a token", async () => {
-  //       const res = await request(server).delete("/appointments/123").send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //     it("should send 401 with a bad token", async () => {
-  //       const res = await request(server)
-  //         .delete("/appointments/123")
-  //         .set("Authorization", "Bearer BAD")
-  //         .send(randomAppt);
-  //       expect(res.statusCode).toEqual(401);
-  //     });
-  //   });
-  // });
+  describe("Before login", () => {
+    describe("GET / appointments", () => {
+      it("should send 401 without a token", async () => {
+        const res = await request(server).get("/appointments").send();
+        expect(res.statusCode).toEqual(401);
+      });
+      it("should send 401 with a bad token", async () => {
+        const res = await request(server)
+          .get("/appointments")
+          .set("Authorization", "Bearer BAD")
+          .send();
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+    describe("GET / appointments/:id", () => {
+      it("should send 401 without a token", async () => {
+        const res = await request(server).get("/appointments/123").send();
+        expect(res.statusCode).toEqual(401);
+      });
+      it("should send 401 with a bad token", async () => {
+        const res = await request(server)
+          .get("/appointments/123")
+          .set("Authorization", "Bearer BAD")
+          .send();
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+  	describe("POST / appointments", () => {
+      it("should send 401 without a token", async () => {
+        const res = await request(server).post("/appointments/").send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+      it("should send 401 with a bad token", async () => {
+        const res = await request(server)
+          .post("/appointments/")
+          .set("Authorization", "Bearer BAD")
+          .send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+  	describe("PUT / appointments/:id", () => {
+      it("should send 401 without a token", async () => {
+        const res = await request(server).put("/appointments/123").send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+      it("should send 401 with a bad token", async () => {
+        const res = await request(server)
+          .put("/appointments/123")
+          .set("Authorization", "Bearer BAD")
+          .send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+  	describe("DELETE / appointments/:id", () => {
+      it("should send 401 without a token", async () => {
+        const res = await request(server).delete("/appointments/123").send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+      it("should send 401 with a bad token", async () => {
+        const res = await request(server)
+          .delete("/appointments/123")
+          .set("Authorization", "Bearer BAD")
+          .send(randomAppt);
+        expect(res.statusCode).toEqual(401);
+      });
+    });
+  });
 
   /** After login **/
 
@@ -277,8 +277,8 @@ describe("Appointments routes", () => {
       //     providerId: decodedProvider0Token._id,
       //   });
     });
-   
-		describe("GET / appointments", () => {
+
+    describe("GET / appointments", () => {
       it("should send 200 for normal user and return appointment object", async () => {
         const res = await request(server)
           .get("/appointments")
@@ -349,14 +349,14 @@ describe("Appointments routes", () => {
           },
         ]);
       });
-			it("should send 404 if appointment does not belong to provider", async () => {
+      it("should send 404 if appointment does not belong to provider", async () => {
         const res = await request(server)
           .get("/appointments/" + aptInfo.body._id)
           .set("Authorization", "Bearer " + provider1Token)
           .send();
         expect(res.statusCode).toEqual(404);
         expect(res.text).toBe("You do not have this appointment");
-      }); 
+      });
       it("should send 200 for provider and return patient's appointment information", async () => {
         const res = await request(server)
           .get("/appointments/" + aptInfo.body._id)
@@ -371,24 +371,84 @@ describe("Appointments routes", () => {
         ]);
       });
     });
+ 
+    describe("PUT / appointments/:id", () => {
+      it("should send 403 for normal user", async () => {
+        const res = await request(server)
+          .put("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + token0)
+          .send();
+        expect(res.statusCode).toEqual(403);
+        expect(res.text).toBe("Not healthcare provider");
+      });
+      // = should return 404 if id is not an objectId
+      it("should send 400 with a bad appointment _id", async () => {
+        const res = await request(server)
+          .put("/appointments/123")
+          .set("Authorization", "Bearer " + provider0Token)
+          .send({ date: "10-05-2023" });
+        expect(res.statusCode).toEqual(400);
+        expect(res.text).toBe("Invalid Object Id");
+      });
+      it("should send 404 without appointment object", async () => {
+        const res = await request(server)
+          .put("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + provider0Token)
+          .send({ date: "" });
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe("Appointment date needed");
+      });
+      it("should send 404 if patient is not related to provider", async () => {
+        const res = await request(server)
+          .put("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + provider1Token)
+          .send({ date: "10-05-2023" });
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe("You do not have this appointment");
+      }); 
+      it("should send 200 for provider with updated appointment object", async () => {
+        const res = await request(server)
+          .put("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + provider0Token)
+          .send({ date: "10-05-2023" });
+        expect(res.statusCode).toEqual(200);
+        expect(res.body).toMatchObject([
+          { date: ["2023-10-05T07:00:00.000Z"], name: decodedToken0.name },
+        ]); 
+      });
+    });
+
+		describe("Delete / appointments/:id", () => { 
+			it("should send 403 for normal user", async () => {
+        const res = await request(server)
+          .delete("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + token0) 
+        expect(res.statusCode).toEqual(403);
+        expect(res.text).toBe("Not healthcare provider");
+      });
+			it("should send 400 with a bad appointment _id", async () => {
+        const res = await request(server)
+          .delete("/appointments/123")
+          .set("Authorization", "Bearer " + provider0Token) 
+        expect(res.statusCode).toEqual(400);
+        expect(res.text).toBe("Invalid Object Id");
+      }); 
+			it("should send 404 if patient is not related to provider", async () => {
+        const res = await request(server)
+          .delete("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + provider1Token)
+        expect(res.statusCode).toEqual(404);
+        expect(res.text).toBe("You do not have this appointment");
+      });  
+			it("should send 200 for provider with deleted appointment", async () => {
+        const res = await request(server)
+          .delete("/appointments/" + aptInfo.body._id)
+          .set("Authorization", "Bearer " + provider0Token)
+        expect(res.statusCode).toEqual(200);
+				expect(res.text).toBe("Appointment deleted");
+      });
+    });
+
   });
-
-  // #region describe("PUT / appointments/:id %#"...
-  // ======== No access for normal users ========
-  // = should return 403 for normal user
-  // = should return 404 if id is not an objectId
-  // = should return 404 if appointment object body is missing
-  // = !!! should return 403 for provider if appointmentId does not belong to provider user (incomplete; fix dao to throw newError if updateAppointment returns null)
-  // = should return 200 for provider with updated appointment object
-  // === should return patient name, email, appointment date, providerId (incomplete; fix dao to add x-ref)
-  // #endregion
-
-  // #region describe("DELETE / appointments/:id %#"...
-  // ======== No access for normal users ========
-  // = should return 403 for normal user
-  // = should return 404 if id is not an objectId
-  // = should return 403 for provider if appointmentId does not belong to provider user (incomplete; fix dao to throw newError deleteAppointment returns null)
-  // = should return 200 for provider with deleted appointment object
-  // === should return message for completed (incomplete; fix route send status)
-  // #endregion
+ 
 });
