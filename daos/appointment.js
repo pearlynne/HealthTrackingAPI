@@ -94,19 +94,19 @@ module.exports.getAppointmentById = async (
       ]);
 };
 
-module.exports.updateAppointment = async (apptId, providerId, apptObj) => {
-  // How to update individual appointment variables (for now it's only the date)
-  return Appointment.findOneAndUpdate(
+module.exports.updateAppointment = async (apptId, providerId, date) => {
+  return await Appointment.findOneAndUpdate(
     {
       _id: apptId,
       providerId: providerId,
     },
-    apptObj
+    { date: date },
+    { new: true }
   );
 };
 
 module.exports.cancelAppointment = async (apptId, providerId) => {
-  return await Appointment.deleteOne({
+  return await Appointment.findOneAndDelete({
     _id: apptId,
     providerId: providerId,
   });
