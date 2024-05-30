@@ -4,7 +4,7 @@
   "description": "330-finalproj-Pearl",
   "main": "index.js",
   "scripts": {
-    "test": "jest --runInBand --coverage --coverageDirectory='coverage'",
+    "test": "jest --runInBand",
     "tdd": "jest --watch --runInBand",
     "start": "node index.js"
   },
