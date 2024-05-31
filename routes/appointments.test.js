@@ -38,6 +38,7 @@ describe("Appointments routes", () => {
     roles: ["user"],
   };
 
+	//TO FIX: Use mapping for this
   const randomAppt = {
     userId: "664a9d2f8ec0a9969454487e",
     date: "01-01-2023",
@@ -320,7 +321,7 @@ describe("Appointments routes", () => {
 
     describe("GET / appointments/:id", () => {
       // = should return 404 if id is not an objectId
-      it("should send 404 with a bad appointment _id", async () => {
+      it("should send 400 with a bad appointment _id", async () => {
         const res = await request(server)
           .get("/appointments/123")
           .set("Authorization", "Bearer " + token0)
