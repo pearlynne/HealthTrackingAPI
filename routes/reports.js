@@ -8,15 +8,15 @@ const { isAuthenticated } = require("../middleware/middleware");
 router.post("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
-
-	
+  // console.log(reportInfo);
   if (!req.body || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("missing information");
+    res.status(404).send("Missing report information");
   } else if (user._id !== reportInfo.userId) {
     res.status(404).send("No access");
   } else {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
+      // console.log(newReport);
       if (newReport) {
         res.json(newReport);
       }
@@ -32,8 +32,11 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   const isProvider = user.roles.includes("provider");
   try {
     const reports = await reportDAO.getReports(user._id, isProvider);
-    // TO FIX: Change return null
-    res.json(reports);
+    if (reports.length === 0) {
+      res.status(404).send("There are no reports");
+    } else {
+      res.json(reports);
+    }
   } catch (e) {
     next(e);
   }
@@ -44,19 +47,31 @@ router.get("/", isAuthenticated, async (req, res, next) => {
 router.get("/stats", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
+
   if (req.query.patientId) {
     if (isProvider) {
-      const stats = await reportDAO.getReportStatsByUserId(req.query.patientId);
-      res.json(stats);
+      const stats = await reportDAO.getReportStatsByUserId(
+        user._id,
+        req.query.patientId
+      );
+      if (stats.length === 0) {
+        res.status(404).send("No stats available");
+      } else {
+        res.json(stats);
+      }
     } else {
       res.status(403).send("forbidden");
     }
   } else {
     try {
       const stats = await reportDAO.getReportStats(user._id, isProvider);
-      //To fix: If/else for no such stats? NULL
-      res.json(stats);
+      if (stats.length === 0) {
+        res.status(404).send("No stats/reports");
+      } else {
+        res.json(stats);
+      }
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }
@@ -76,13 +91,14 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
         user._id,
         searchTerm,
         isProvider
-      ); 
+      );
       if (results.length === 0) {
         res.status(404).send("No reports with such terms");
       } else {
         res.json(results);
       }
     } catch (e) {
+      console.log(e);
       next(e);
     }
   }
@@ -93,14 +109,13 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
   const isProvider = user.roles.includes("provider");
-
   try {
     const report = await reportDAO.getReportById(
       user._id,
       reportId,
       isProvider
     );
-    if (report === null) {
+    if (report.length === 0) {
       res.status(404).send("There is no such report. You may not have access");
     } else {
       res.json(report);
@@ -117,8 +132,8 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
   const reportInfo = req.body;
   const reportId = req.params.id;
 
-  if (!req.params.id || !req.body || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("missing information");
+  if (!req.body || JSON.stringify(req.body) === "{}") {
+    res.status(404).send("Missing report information");
   } else {
     try {
       const updatedReport = await reportDAO.updateReportById(
@@ -145,23 +160,23 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
 
-  if (!req.params.id) {
-    res.status(404).send("missing report Id");
-  } else {
-    try {
+     try {
       // Covers cases where user logged in doesnt match userId of reportId
       const deletedReport = await reportDAO.deleteReportById(
         user._id,
         reportId
       );
-      if (deletedReport) {
-        res.json(deletedReport);
-      }
+      if (deletedReport === null) {
+				res.status(404).send("There is no such report. You may not have access")
+			} else {
+				res.status(200).send("Appointment deleted");
+
+			}
       //Insert error handlign for ID issues?
     } catch (e) {
       next(e);
     }
-  }
+ 
 });
 
 module.exports = router;
