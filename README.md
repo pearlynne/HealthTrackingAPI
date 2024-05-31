@@ -1,6 +1,16 @@
 # <p align="center"> 330 Final Project <br> Mental Health Behavioral Tracking </p>
 
 ## Updates <a name="updates"></a>
+### Working on [see [timeline](#tasks) for breakdown]: 
+- Create Demo
+- Practice Demo
+- Simplify jest tests
+- Add match object to jest tests
+- Self-eval in README 
+- Create middleware for patient is not providers'
+- Create frontend forms (TBD/Nice to have)
+
+
 ### Completed: 
 - Express server 
 - Mongo connection
@@ -9,12 +19,10 @@
 - CRUD routes for auth, user, appointments, and reports
 - Middleware for authorization and authentication
 - Revision of routes
-
-### Working on [see [timeline](#tasks) for breakdown]: 
 - Creating demo collection for presentation and testing routes on Postman (40% complete; left with appointments and report routes)
-- Create Jest tests for all routes (5% completed)
+- Create Jest tests for all routes 
 - Review test utils for Jest test
-- Self-eval in README 
+
 
 
 ## Table of contents
@@ -165,20 +173,10 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ## Timeline + Plan <a name="tasks"></a>
 
 ### In Progress
-**Week 8**
-- [ ] (New addition) Review Jest tests setup
-- [ ] (New addition) Review Jest tests utils
-- [ ] Create Jest tests for authorization and authentication
-- [ ] Create Jest tests for user route
-- [ ] Create Jest tests for records route
-- [ ] Create Jest tests for appointment route
-- [ ] Test routes
-- [ ] Revise routes/daos/models 
-- [ ] (New addition) Error handling for id
-- [ ] (New addition) Review with Date issues, isProvider, edge cases 
-- [ ] (New addition) Create middleware for patient is not providers'
+
 
 **Week 9** 
+- [ ] (New addition) Create middleware for patient is not providers'
 - [ ] Create demo 
 - [ ] Complete README
 - [ ] Complete self-eval
@@ -230,4 +228,19 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- [x]  `GET /appointments`, `GET /appointments/:id`
 	- [x]  `PUT /appointments/:id`
 	- [x]  `DELETE /appointments/:id`
+</details>
+
+
+<details>
+<summary><b>Week 8</b></summary>
+- [x] (New addition) Review Jest tests setup
+- [x] (New addition) Review Jest tests utils
+- [x] Create Jest tests for authorization and authentication
+- [x] Create Jest tests for user route
+- [x] Create Jest tests for records route
+- [x] Create Jest tests for appointment route
+- [x] Test routes
+- [x] Revise routes/daos/models 
+- [x] (New addition) Error handling for id
+- [x] (New addition) Review with Date issues, isProvider, edge cases 
 </details>
