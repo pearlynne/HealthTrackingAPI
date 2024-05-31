@@ -6,6 +6,8 @@ const reportSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
+	name: { type: String }, //cannot require true?
+	email: { type: String },
   date: { type: Date, required: true },
   mood: { type: Number, required: true },
   inattentiveness: { type: Number, required: true },
