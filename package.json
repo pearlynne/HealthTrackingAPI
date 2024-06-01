@@ -4,7 +4,7 @@
   "description": "330-finalproj-Pearl",
   "main": "index.js",
   "scripts": {
-    "test": "jest --runInBand",
+		"test": "jest --runInBand --coverage --coverageDirectory='coverage'",
     "tdd": "jest --watch --runInBand",
     "start": "node index.js"
   },
@@ -14,7 +14,7 @@
   },
   "author": "",
   "license": "ISC",
-	"jest": {
+  "jest": {
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/",
