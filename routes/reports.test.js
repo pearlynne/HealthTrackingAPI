@@ -75,7 +75,6 @@ describe("Reports routes", () => {
     journalEntry: "excited",
     medRxn: "heart palpitations",
   };
-
   const user1report1 = {
     date: "12-15-2022",
     mood: 5,
@@ -85,7 +84,6 @@ describe("Reports routes", () => {
     journalEntry: "excited",
     medRxn: "heart palpitations",
   };
-
   const user2report1 = {
     date: "12-15-2022",
     mood: 3,
@@ -95,7 +93,6 @@ describe("Reports routes", () => {
     journalEntry: "sad",
     medRxn: "tired",
   };
-
   const user3report1 = {
     date: "12-15-2022",
     mood: 2,
@@ -106,9 +103,15 @@ describe("Reports routes", () => {
     medRxn: "none",
   };
 
-  // TO FIX: SHould sign up first
-  // Before login
-  // TOFIX: Add objects
+  beforeEach(async () => {
+    await request(server).post("/auth/signup").send(provider0);
+    await request(server).post("/auth/signup").send(provider1);
+    await request(server).post("/auth/signup").send(user0);
+    await request(server).post("/auth/signup").send(user1);
+    await request(server).post("/auth/signup").send(user2);
+    await request(server).post("/auth/signup").send(user3);
+  });
+
   describe("Before login", () => {
     describe("GET / reports", () => {
       it("should send 401 without a token", async () => {
@@ -162,7 +165,6 @@ describe("Reports routes", () => {
         expect(res.statusCode).toEqual(401);
       });
     });
-
     describe("PUT / reports/:id", () => {
       it("should send 401 without a token", async () => {
         const res = await request(server).put("/reports/123").send();
@@ -172,7 +174,7 @@ describe("Reports routes", () => {
         const res = await request(server)
           .put("/reports/123")
           .set("Authorization", "Bearer BAD")
-          .send(); // TO FIX: Add report
+          .send();
         expect(res.statusCode).toEqual(401);
       });
     });
@@ -193,59 +195,48 @@ describe("Reports routes", () => {
 
   //After login
   let token0;
-  let decodedToken0;
   let token1;
-  let decodedToken1;
   let provider0Token;
-  let decodedProvider0Token;
   let provider1Token;
-  let decodedProvider1Token;
+  let providers;
+  let users;
 
   beforeEach(async () => {
-    await request(server).post("/auth/signup").send(provider0);
+    providers = await User.find(
+      { roles: { $in: ["provider"] } },
+      { name: 1, email: 1 }
+    );
+
     const resP1 = await request(server).post("/auth/login").send(provider0);
     provider0Token = resP1.body.token;
-    decodedProvider0Token = jwt.decode(provider0Token);
 
-    await request(server).post("/auth/signup").send(provider1);
     const resP2 = await request(server).post("/auth/login").send(provider1);
     provider1Token = resP2.body.token;
-    decodedProvider1Token = jwt.decode(provider1Token);
 
-    await request(server).post("/auth/signup").send(user0);
     const res0 = await request(server).post("/auth/login").send(user0);
     token0 = res0.body.token;
-    decodedToken0 = jwt.decode(token0);
-    await User.updateOne(
-      { email: user0.email },
-      { $push: { providerId: decodedProvider0Token._id } }
-    );
 
-    await request(server).post("/auth/signup").send(user1);
     const res1 = await request(server).post("/auth/login").send(user1);
     token1 = res1.body.token;
-    decodedToken1 = jwt.decode(token1);
-    await User.updateOne(
-      { email: user1.email },
-      { $push: { providerId: decodedProvider0Token._id } }
-    );
 
-    await request(server).post("/auth/signup").send(user2);
     const res2 = await request(server).post("/auth/login").send(user2);
     token2 = res2.body.token;
-    decodedToken2 = jwt.decode(token2);
-    await User.updateOne(
-      { email: user2.email },
-      { $push: { providerId: decodedProvider1Token._id } }
-    );
 
-    await request(server).post("/auth/signup").send(user3);
     const res3 = await request(server).post("/auth/login").send(user3);
     token3 = res3.body.token;
-    decodedToken3 = jwt.decode(token3);
-    await User.updateOne(
-      { email: user3.email },
-      { $push: { providerId: decodedProvider1Token._id } }
+
+    await User.updateMany(
+      { name: { $in: [user0.name, user1.name] } },
+      { $set: { providerId: providers[0]._id } }
+    );
+    await User.updateMany(
+      { name: { $in: [user2.name, user3.name] } },
+      { $set: { providerId: providers[1]._id } }
+    );
+
+    users = await User.find(
+      { roles: { $nin: ["provider"] } },
+      { name: 1, email: 1 }
     );
   });
 
@@ -264,10 +255,10 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token1)
         .send({
           ...user0report1,
-          userId: decodedToken0._id,
-          email: decodedToken0.email,
-          name: decodedToken0.name,
-          providerId: decodedProvider0Token._id,
+          userId: users[0]._id,
+          email: users[0].email,
+          name: users[0].name,
+          providerId: providers[0]._id,
         });
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("No access");
@@ -278,54 +269,52 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send({
           ...user0report1,
-          userId: decodedToken0._id,
-          providerId: decodedProvider0Token._id,
+          userId: users[0]._id.toString(),
+          providerId: providers[0]._id.toString(),
         });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toMatchObject({
         ...user0report1,
         date: "2022-12-10T08:00:00.000Z",
-        userId: decodedToken0._id,
-        email: decodedToken0.email,
-        name: decodedToken0.name,
-        providerId: decodedProvider0Token._id,
+        userId: users[0]._id.toString(),
+        email: users[0].email,
+        name: users[0].name,
+        providerId: providers[0]._id.toString(),
       });
     });
   });
 
+  let updatedUser;
   beforeEach(async () => {
+    updatedUser = users.map(({ _id: userId, name, email }) => ({
+      userId,
+      name,
+      email,
+    }));
     await Report.insertMany([
       {
         ...user0report1,
-        userId: decodedToken0._id,
-        email: decodedToken0.email,
-        name: decodedToken0.name,
-        providerId: decodedProvider0Token._id,
+        ...updatedUser[0],
+        providerId: providers[0]._id,
       },
       {
         ...user0report2,
-        userId: decodedToken0._id,
-        email: decodedToken0.email,
-        name: decodedToken0.name,
-        providerId: decodedProvider0Token._id,
+        ...updatedUser[0],
+        providerId: providers[0]._id,
       },
       {
         ...user0report3,
-        userId: decodedToken0._id,
-        email: decodedToken0.email,
-        name: decodedToken0.name,
-        providerId: decodedProvider0Token._id,
+        ...updatedUser[0],
+        providerId: providers[0]._id,
       },
       {
         ...user1report1,
-        userId: decodedToken1._id,
-        email: decodedToken1.email,
-        name: decodedToken1.name,
-        providerId: decodedProvider0Token._id,
+        ...updatedUser[1],
+        providerId: providers[0]._id,
       },
     ]);
   });
-	afterEach(testUtils.clearDB);
+  afterEach(testUtils.clearDB);
 
   describe("GET / reports", () => {
     it("should send 404 for normal user with message if no reports", async () => {
@@ -343,7 +332,7 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toEqual(3);
-      // TO FIX: add match object
+      expect(res.body[0]).toHaveProperty("medRxn", user0report1.medRxn);
     });
     it("should send 200 for provider and return reports from all patients", async () => {
       const res = await request(server)
@@ -351,27 +340,19 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
-      expect(res.body[0]).toMatchObject({
-        name: decodedToken0.name,
-        email: decodedToken0.email,
-      });
-      expect(res.body[3]).toMatchObject({
-        name: decodedToken1.name,
-        email: decodedToken1.email,
-      });
+      expect(res.body.length).toEqual(4);
+      expect(res.body[0]).toHaveProperty("medRxn", user0report1.medRxn);
+      expect(res.body[3]).toHaveProperty("medRxn", user1report1.medRxn);
     });
   });
 
- 
-	let aptRes;
+  let aptRes;
   beforeEach(async () => {
-		const res = await Report.findOne({ email: decodedToken0.email });
+    const res = await Report.findOne({ email: users[0].email });
     aptRes = res;
   });
-	
-	afterEach(testUtils.clearDB);
 
-  describe("GET / reports/:id %#", () => {
+  describe("GET / reports/:id ", () => {
     it("should send 400 with a bad appointment _id", async () => {
       const res = await request(server)
         .get("/reports/123")
@@ -395,8 +376,8 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
-        name: decodedToken0.name,
-        email: decodedToken0.email,
+        name: users[0].name,
+        email: users[0].email,
       });
     });
     it("should send 200 for provider user and report", async () => {
@@ -406,8 +387,8 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
-        name: decodedToken0.name,
-        email: decodedToken0.email,
+        name: users[0].name,
+        email: users[0].email,
       });
     });
     it("should send 404 for provider user if report is not from their patient", async () => {
@@ -428,10 +409,14 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
-        name: decodedToken0.name,
-        email: decodedToken0.email,
+        _id: users[0]._id.toString(),
+        name: users[0].name,
+        email: users[0].email,
+        averageMood: 2.3333333333333335,
+        Inattentiveness: 1,
+        Hyperactivity: 2,
+        Impulsitivity: 1.6666666666666667,
       });
-      // TO FIX: add match object
     });
     it("should send 404 for normal user without stats", async () => {
       const res = await request(server)
@@ -440,7 +425,6 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("No stats/reports");
-      // TO FIX: add match object
     });
     it("should send 200 for providers and return report stats sorted by name", async () => {
       const res = await request(server)
@@ -449,61 +433,73 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
-        name: decodedToken0.name,
-        email: decodedToken0.email,
+        _id: users[0]._id.toString(),
+        name: users[0].name,
+        email: users[0].email,
+        averageMood: 2.3333333333333335,
+        Inattentiveness: 1,
+        Hyperactivity: 2,
+        Impulsitivity: 1.6666666666666667,
       });
       expect(res.body[1]).toMatchObject({
-        name: decodedToken1.name,
-        email: decodedToken1.email,
+        _id: users[1]._id.toString(),
+        name: users[1].name,
+        email: users[1].email,
+        averageMood: 5,
+        Inattentiveness: 1,
+        Hyperactivity: 2,
+        Impulsitivity: 1,
       });
     });
     it("should send 403 for normal user if query is made", async () => {
       const res = await request(server)
-        .get("/reports/stats?patientId=" + encodeURI(decodedToken0._id))
+        .get("/reports/stats?patientId=" + encodeURI(users[0]._id))
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(403);
-      expect(res.text).toBe("forbidden");
-      // TO FIX: add match object
+      expect(res.text).toBe("Forbidden");
     });
     it("should send 404 for providers if query id is non-patient", async () => {
       const res = await request(server)
-        .get("/reports/stats?patientId=" + encodeURI(decodedToken0._id))
+        .get("/reports/stats?patientId=" + encodeURI(users[0]._id))
         .set("Authorization", "Bearer " + provider1Token)
         .send();
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("No stats available");
-      // TO FIX: add match object
     });
     it("should send 200 for providers and return patient's stats", async () => {
       const res = await request(server)
-        .get("/reports/stats?patientId=" + encodeURI(decodedToken0._id))
+        .get("/reports/stats?patientId=" + encodeURI(users[0]._id))
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
-        Patient: { name: decodedToken0.name, email: decodedToken0.email },
+        Patient: { name: users[0].name, email: users[0].email },
+				averageMood: 2.3333333333333335,
+        Inattentiveness: 1,
+        Hyperactivity: 2,
+        Impulsitivity: 1.6666666666666667,
       });
     });
   });
 
   describe("GET / reports/search", () => {
-		beforeEach(async () => {
-			await Report.insertMany([
-				{
-					...user2report1,
-					userId: decodedToken2._id,
-					providerId: decodedProvider1Token._id,
-				},
-				{
-					...user3report1,
-					userId: decodedToken3._id,
-					providerId: decodedProvider1Token._id,
-				},
-			]); 
-		}); 
-	
-		it("should send 404 if report information is missing", async () => {
+    beforeEach(async () => {
+      await Report.insertMany([
+        {
+          ...user2report1,
+          ...updatedUser[2],
+          providerId: providers[1]._id,
+        },
+        {
+          ...user3report1,
+          ...updatedUser[3],
+          providerId: providers[1]._id,
+        },
+      ]);
+    });
+
+    it("should send 404 if report information is missing", async () => {
       const res = await request(server)
         .get("/reports/search?query=")
         .set("Authorization", "Bearer " + token0)
@@ -517,18 +513,20 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
-      // TO ADD: OBJECT search terms
+			expect(res.body).toHaveLength(2); 
+			expect(res.body[0]).toHaveProperty("journalEntry", 'tired');
+			expect(res.body[1]).toHaveProperty("journalEntry", 'tired');
     });
-    // should return 200 for provider and search result of all patient user
     it("should send 200 for normal user and search result of user", async () => {
-      const res = await request(server)
+			const res = await request(server)
         .get("/reports/search?query=" + encodeURI("heart palpitations"))
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
-      // TO ADD: OBJECT search terms
+			expect(res.body).toHaveLength(3); 
+			expect(res.body[0]).toHaveProperty("name", users[0].name);
+			expect(res.body[2]).toHaveProperty("name", users[1].name);
     });
-    // should return 404 if search result is empty
     it("should send 404 if search result is empty", async () => {
       const res = await request(server)
         .get("/reports/search?query=" + encodeURI("angry"))
@@ -536,11 +534,10 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("No reports with such terms");
-      // TO ADD: OBJECT search terms
     });
   });
 
-  describe("PUT / reports/:id %#", () => {
+  describe("PUT / reports/:id ", () => {
     it("should send 400 with a bad appointment _id", async () => {
       const res = await request(server)
         .put("/reports/123")
@@ -571,11 +568,20 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send([{ mood: 2, medRxn: "tremors" }]);
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toMatchObject({ mood: 2, medRxn: "tremors" });
+      expect(res.body).toMatchObject({ 
+				name: users[0].name,
+				email: users[0].email,
+				mood: 2,
+				inattentiveness: 1,
+				hyperactivity: 2,
+				impulsitivity: 3,
+				journalEntry: 'tired',
+				medRxn: 'tremors'
+			});
     });
   });
 
-  describe("DELETE / reports/:id %#", () => {
+  describe("DELETE / reports/:id ", () => {
     it("should send 400 with a bad appointment _id", async () => {
       const res = await request(server)
         .delete("/reports/123")

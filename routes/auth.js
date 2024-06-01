@@ -21,7 +21,6 @@ router.post("/signup", async (req, res, next) => {
     try {
       const { name, email, password, roles, providerId } = req.body; 
       const hash = await bcrypt.hash(password, 5);
-      // Verify if we can pass undefined parameter; if provider, no provider id yet
       const newUser = await userDAO.signup(
         name,
         email,

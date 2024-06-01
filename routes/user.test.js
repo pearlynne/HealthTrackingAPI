@@ -38,6 +38,13 @@ describe("User routes", () => {
     roles: ["user"],
   };
 
+	beforeEach(async () => {
+		await request(server).post("/auth/signup").send(user0);
+		await request(server).post("/auth/signup").send(user1);
+		await request(server).post("/auth/signup").send(provider0);
+		await request(server).post("/auth/signup").send(provider1);
+	});
+
   describe("Before login", () => {
     describe("GET /", () => {
       it("should send 401 without a token", async () => {
@@ -69,77 +76,78 @@ describe("User routes", () => {
 
   describe("after login", () => {
     let token0;
-    let decodedToken0;
     let token1;
-    let decodedToken1;
-    let provider0Token;
-    let decodedProvider0Token;
-    let provider1Token;
-    // let decodedProvider1Token;
+    let provider0Token; 
+    let provider1Token; 
+		let providers
+		let users
+		
     beforeEach(async () => {
-      await request(server).post("/auth/signup").send(user0);
-      const res0 = await request(server).post("/auth/login").send(user0);
-      token0 = res0.body.token;
-      decodedToken0 = jwt.decode(token0);
+			providers = await User.find(
+				{ roles: { $in: ["provider"] } },
+				{ name: 1, email: 1 }
+			);
+			const res0 = await request(server).post("/auth/login").send(provider0);
+      provider0Token = res0.body.token;  
 
-      await request(server).post("/auth/signup").send(user1);
-      const res1 = await request(server).post("/auth/login").send(user1);
-      token1 = res1.body.token;
-      decodedToken1 = jwt.decode(token1);
+      const res2 = await request(server).post("/auth/login").send(user0);
+      token0 = res2.body.token; 
 
-      await request(server).post("/auth/signup").send(provider0);
-      const res2 = await request(server).post("/auth/login").send(provider0);
-      provider0Token = res2.body.token;
-      decodedProvider0Token = jwt.decode(provider0Token);
+      const res3 = await request(server).post("/auth/login").send(user1);
+      token1 = res3.body.token; 
 
-      await request(server).post("/auth/signup").send(provider1);
-      const res3 = await request(server).post("/auth/login").send(provider1);
-      provider1Token = res3.body.token;
-      // decodedProvider1Token = jwt.decode(provider1Token);
+      await User.updateMany(
+        { roles: { $nin: ["provider"] } },
+        { $push: { providerId: providers[0]._id } }
+      );
+
+			users = await User.find(
+				{ roles: { $nin: ["provider"] } },
+				{ name: 1, email: 1}
+			);
     });
 
-    //Consider mapping a few users?
     describe("PUT /:id/provider", () => {
       it("should send 400 to normal user with empty provider id", async () => {
         const res = await request(server)
-          .put("/users/" + decodedToken0._id + "/provider")
+          .put("/users/" + users[0]._id + "/provider")
           .set("Authorization", "Bearer " + token0)
           .send();
         expect(res.statusCode).toEqual(400);
         expect(res.text).toBe("Provider ID needed");
       });
-      it("should send 403 with a bad user _id", async () => {
+      it("should send 404 with a bad user _id", async () => {
         const res = await request(server)
           .put("/users/123/provider")
           .set("Authorization", "Bearer " + token0)
-          .send({ providerId: decodedProvider0Token._id });
-        expect(res.statusCode).toEqual(403);
+          .send({ providerId: providers[0]._id });
+        expect(res.statusCode).toEqual(404);
         expect(res.text).toBe("You are not allowed to access others' provider");
       });
-      it("should send 403 to normal user with someone else's id", async () => {
+      it("should send 404 to normal user with someone else's id", async () => {
         const res = await request(server)
-          .put("/users/" + decodedProvider0Token._id + "/provider")
+          .put("/users/" + providers[0]._id + "/provider")
           .set("Authorization", "Bearer " + token0)
-          .send({ providerId: decodedProvider0Token._id });
-        expect(res.statusCode).toEqual(403);
+          .send({ providerId: providers[0]._id });
+        expect(res.statusCode).toEqual(404);
         expect(res.text).toBe("You are not allowed to access others' provider");
       });
       it("should send 200 to normal user their own id and return updated information", async () => {
         const res = await request(server)
-          .put("/users/" + decodedToken0._id + "/provider")
+          .put("/users/" + users[0]._id + "/provider")
           .set("Authorization", "Bearer " + token0)
-          .send({ providerId: decodedProvider0Token._id });
+          .send({ providerId: providers[0]._id });
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject({
-          _id: decodedToken0._id,
-          name: decodedToken0.name,
-          email: decodedToken0.email,
-          providerId: decodedProvider0Token._id,
+          _id: users[0]._id.toString(),
+          name: users[0].name,
+          email: users[0].email,
+          providerId: providers[0]._id.toString(),
         });
       });
       it("should send 400 to normal user if providerId does not exist ", async () => {
         const res = await request(server)
-          .put("/users/" + decodedToken0._id + "/provider")
+          .put("/users/" + users[0]._id + "/provider")
           .set("Authorization", "Bearer " + token0)
           .send({ providerId: "6657aeb53975f21e8339343" });
         expect(res.statusCode).toEqual(400);
@@ -149,13 +157,13 @@ describe("User routes", () => {
 
     beforeEach(async () => {
       const res4 = await request(server)
-        .put("/users/" + decodedToken0._id + "/provider")
+        .put("/users/" + users[0]._id + "/provider")
         .set("Authorization", "Bearer " + token0)
-        .send({ providerId: decodedProvider0Token._id });
+        .send({ providerId: providers[0]._id });
       const res5 = await request(server)
-        .put("/users/" + decodedToken1._id + "/provider")
+        .put("/users/" + users[1]._id + "/provider")
         .set("Authorization", "Bearer " + token1)
-        .send({ providerId: decodedProvider0Token._id });
+        .send({ providerId: providers[0]._id });
     });
 
     describe("GET /users", () => {
@@ -174,8 +182,8 @@ describe("User routes", () => {
           .send();
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject([
-          { name: decodedToken0.name, email: decodedToken0.email },
-          { name: decodedToken1.name, email: decodedToken1.email },
+          { name: users[0].name, email: users[0].email },
+          { name: users[1].name, email: users[1].email },
         ]);
       });
     });
@@ -183,7 +191,7 @@ describe("User routes", () => {
     describe("GET / /:id user %#", () => {
       it("should send 400 to normal user if id belongs to someone else", async () => {
         const res = await request(server)
-          .get("/users/" + decodedToken1._id)
+          .get("/users/" + users[1]._id)
           .set("Authorization", "Bearer " + token0)
           .send();
         expect(res.statusCode).toEqual(404);
@@ -191,43 +199,45 @@ describe("User routes", () => {
       });
       it("should send 200 to normal user and return own information", async () => {
         const res = await request(server)
-          .get("/users/" + decodedToken0._id)
+          .get("/users/" + users[0]._id)
           .set("Authorization", "Bearer " + token0)
           .send();
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject({
-          name: decodedToken0.name,
-          email: decodedToken0.email,
-          providerId: decodedProvider0Token._id, //see if I can get it from jwtoken
+          name: users[0].name,
+          email: users[0].email,
+          providerId: providers[0]._id.toString(), 
         });
       });
       it("should send 200 to provider and return own information ", async () => {
         const res = await request(server)
-          .get("/users/" + decodedProvider0Token._id)
+          .get("/users/" + providers[0]._id)
           .set("Authorization", "Bearer " + provider0Token)
           .send();
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject({
-          name: decodedProvider0Token.name,
-          email: decodedProvider0Token.email,
+          name: providers[0].name,
+          email: providers[0].email,
         });
       });
       it("should send 200 to provider and return patient's information ", async () => {
         const res = await request(server)
-          .get("/users/" + decodedToken0._id)
+          .get("/users/" + users[0]._id)
           .set("Authorization", "Bearer " + provider0Token)
           .send();
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject([
           {
-            name: decodedToken0.name,
-            email: decodedToken0.email,
+            name: users[0].name,
+            email: users[0].email,
           },
         ]);
       });
       it("should send 404 to provider if not their patient", async () => {
+				const res1 = await request(server).post("/auth/login").send(provider1);
+      provider1Token = res1.body.token; 
         const res = await request(server)
-          .get("/users/" + decodedToken0._id)
+          .get("/users/" + users[0]._id)
           .set("Authorization", "Bearer " + provider1Token)
           .send();
         expect(res.statusCode).toEqual(404);

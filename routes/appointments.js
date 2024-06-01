@@ -20,9 +20,8 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
     !req.body ||
     JSON.stringify(req.body) === "{}"
   ) {
-    res.status(404).send("Missing appointment information");
-    //Is this the right error code?
-  } else if (isProvider && providerId !== user._id) {
+    res.status(404).send("Missing appointment information"); 
+  } else if (providerId !== user._id) {
     res.status(404).send("You cannot create appointments for other providers");
   } else {
     try {
@@ -36,13 +35,8 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
           patientId,
           apptDate,
           providerId
-        );
-        res.send({
-          _id: newAppointment._id,
-          userId: newAppointment.userId,
-          date: newAppointment.date,
-          providerId: newAppointment.providerId,
-        });
+        ); 
+        res.send(newAppointment);
       }
     } catch (e) {
       next(e);
@@ -63,12 +57,12 @@ router.get("/", isAuthenticated, async (req, res, next) => {
       isProvider
     );
     if (newAppointment.length === 0) {
-      res.status(200).send("You do not have any appointments");
+      res.status(404).send("You do not have any appointments");
     } else {
-      res.json(newAppointment);
+			res.json(newAppointment);
     }
   } catch (e) {
-    next(e);
+		next(e);
   }
 });
 
@@ -76,17 +70,16 @@ router.get("/", isAuthenticated, async (req, res, next) => {
 // Provider users should get information from appointment id
 // Patient users should get information from appointment id
 router.get("/:id", isAuthenticated, async (req, res, next) => {
-  const user = req.user;
+	const user = req.user;
   const appointmentId = req.params.id;
   const isProvider = user.roles.includes("provider");
-
+	
   try {
-    const newAppointment = await appointmentDAO.getAppointmentById(
-      appointmentId,
+		const newAppointment = await appointmentDAO.getAppointmentById(
+			appointmentId,
       user._id,
       isProvider
-    );
-
+    ); 
     if (newAppointment.length === 0) {
       res.status(404).send("You do not have this appointment");
     } else {

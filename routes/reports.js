@@ -8,7 +8,6 @@ const { isAuthenticated } = require("../middleware/middleware");
 router.post("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
-  // console.log(reportInfo);
   if (!req.body || JSON.stringify(req.body) === "{}") {
     res.status(404).send("Missing report information");
   } else if (user._id !== reportInfo.userId) {
@@ -16,7 +15,6 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   } else {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
-      // console.log(newReport);
       if (newReport) {
         res.json(newReport);
       }
@@ -60,7 +58,7 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         res.json(stats);
       }
     } else {
-      res.status(403).send("forbidden");
+      res.status(403).send("Forbidden");
     }
   } else {
     try {

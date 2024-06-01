@@ -9,7 +9,7 @@ router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-    res.json(users);
+		res.json(users);
   } catch (e) {
     next(e);
   }
@@ -55,7 +55,7 @@ router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
     res.status(400).send("Provider ID needed");
   } else if (userId !== req.user._id) {
 		//TO FIX: Change status code
-    res.status(403).send("You are not allowed to access others' provider");
+    res.status(404).send("You are not allowed to access others' provider");
   } else {
     try {
       const updatedProvider = await userDAO.updateUserProvider(
