@@ -1,35 +1,27 @@
 const Appointment = require("../models/appointment");
 const User = require("../models/user");
-
 const mongoose = require("mongoose");
 
 module.exports = {};
 
-// Create new appointments
 module.exports.createAppointment = async (patientId, apptDate, providerId) => {
+  const userInfo = await User.findById({ _id: patientId });
   return await Appointment.create({
+    name: userInfo.name,
+    email: userInfo.email,
     userId: patientId,
     date: apptDate,
     providerId: providerId,
   });
 };
 
-// Get appointments and details such as date, time, location.
 module.exports.getAppointments = async (userId, isProvider) => {
   return isProvider
     ? await Appointment.aggregate([
         { $match: { providerId: new mongoose.Types.ObjectId(userId) } },
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "Patient",
-          },
-        },
-        { $unwind: "$Patient" },
-        { $group: { _id: "$Patient.name", date: { $push: "$date" } } },
+        { $group: { _id: "$name", date: { $push: "$date" } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
+        { $sort: { name: 1 } },
       ])
     : await Appointment.aggregate([
         { $match: { userId: new mongoose.Types.ObjectId(userId) } },
@@ -47,13 +39,14 @@ module.exports.getAppointments = async (userId, isProvider) => {
       ]);
 };
 
+
 module.exports.getAppointmentById = async (
   appointmentId,
   userId,
   isProvider
 ) => {
   return isProvider
-    ? await // Appointment.findOne({ _id: appointmentId, providerId: userId })
+    ? await 
       Appointment.aggregate([
         {
           $match: {
@@ -61,16 +54,7 @@ module.exports.getAppointmentById = async (
             providerId: new mongoose.Types.ObjectId(userId),
           },
         },
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "_id",
-            as: "Patient",
-          },
-        },
-        { $unwind: "$Patient" },
-        { $group: { _id: "$Patient.name", date: { $push: "$date" } } },
+        { $group: { _id: "$name", date: { $push: "$date" } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
       ])
     : await Appointment.aggregate([
@@ -93,6 +77,7 @@ module.exports.getAppointmentById = async (
         { $project: { _id: 0, name: "$_id", date: 1 } },
       ]);
 };
+
 
 module.exports.updateAppointment = async (apptId, providerId, date) => {
   return await Appointment.findOneAndUpdate(

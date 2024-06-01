@@ -51,13 +51,13 @@ module.exports.getReportsBySearchTerm = async (
     ? await Report.find(
         { providerId: userId, $text: { $search: searchTerms } },
         { score: { $meta: "textScore" } },
-        { projection: { userId: 0, providerId: 0, __v: 0 } }
-      )
+        { projection: { userId: 0, providerId: 0, __v: 0 } },
+      ).sort({name :1})
     : await Report.find(
         { userId: userId, $text: { $search: searchTerms } },
         { score: { $meta: "textScore" } },
         { projection: { userId: 0, providerId: 0, __v: 0 } }
-      );
+      ).sort({name :1});
 };
 
 // Get stats for mood and symptom from all reports for given user

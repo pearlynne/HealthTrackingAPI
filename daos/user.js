@@ -36,15 +36,21 @@ module.exports.getUser = async (email) => {
 // Get all user records working with the same provider
 module.exports.getUsersOfProvider = async (userId, patientId) => {
   if (patientId) {
-		return await User.aggregate([
-      { $match: { providerId: new mongoose.Types.ObjectId(userId), 
-        _id: new mongoose.Types.ObjectId(patientId), } }, 
+    return await User.aggregate([
+      {
+        $match: {
+          providerId: new mongoose.Types.ObjectId(userId),
+          _id: new mongoose.Types.ObjectId(patientId),
+        },
+      },
       { $project: { _id: 0, name: 1, email: 1 } },
     ]);
-  } else { 
+  } else {
     return await User.aggregate([
-      { $match: { providerId: new mongoose.Types.ObjectId(userId) } }, 
+      { $match: { providerId: new mongoose.Types.ObjectId(userId) } },
       { $project: { _id: 0, name: 1, email: 1 } },
+
+      { $sort: { name: 1 } },
     ]);
   }
 };
@@ -64,7 +70,6 @@ module.exports.updateUserProvider = async (userId, providerId) => {
     { providerId: providerId },
     { new: true, projection: { name: 1, email: 1, providerId: 1 } }
   );
-  //TO FIX: Cannot suppress
 };
 
 class BadDataError extends Error {}
