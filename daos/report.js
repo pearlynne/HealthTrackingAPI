@@ -10,6 +10,7 @@ module.exports.createReport = async (userId, reportObj) => {
   return await Report.create({
     name: userInfo.name,
     email: userInfo.email,
+		providerId: userInfo.providerId,
     userId: userId,
     ...reportObj,
   });

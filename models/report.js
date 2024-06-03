@@ -17,8 +17,7 @@ const reportSchema = new mongoose.Schema({
   medRxn: { type: String },
 	providerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "users",
-    required: true,
+    ref: "users", 
   },
 });
 

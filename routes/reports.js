@@ -9,8 +9,6 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   const reportInfo = req.body;
   if (!req.body || JSON.stringify(req.body) === "{}") {
     res.status(404).send("Missing report information");
-  } else if (user._id !== reportInfo.userId) {
-    res.status(404).send("No access");
   } else {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
@@ -37,7 +35,6 @@ router.get("/", isAuthenticated, async (req, res, next) => {
     next(e);
   }
 });
-
 
 router.get("/stats", isAuthenticated, async (req, res, next) => {
   const user = req.user;
