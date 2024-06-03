@@ -73,73 +73,88 @@ The API utilizes MongoDB collections to manage user and provider functionalities
   - Index for text search
 - **Appointment management:** userId (required, ref), Date (required), Time, userId (required), Healthcare Provider's userId (required, ref)
 
-### DAOs
-#### User
-- **signup(userObj):** create a user record
-- **getUser(email):** get a user record using their email
-- **getUsersOfProvider(userId, providerId)**: get all user records of a provider
-- **updateUserPassword(userId, password):** update the user's password field
-- **updateUserProvider(userId, providerId)**: update user’s healthcare provider
+## DAOs
 
-#### Report
-- **createReport(userId, reportObj):** create a behavioral report for the given user
-- **getReportById(userId, reportId):** get specific behavioral report for the given user/provider
-- **getReports(userId isProvider):** get all behavioral reports for the given user/provider
-- **getReportsBySearchTerm(userId, searchTerms):** get all behavioral reports for the given user/provider based on search terms
-- **getReportStats(userId):** get stats for mood ratings and symptom tracking from all behavioral reports for the given user/provider
-- **getReportStatsByUserId(userId):** get stats for mood ratings and symptom tracking from all behavioral reports of a specific user for provider
-- **updatedReportById(userId, reportId, updatedObj):** update specific behavioral report for the given user
-- **deleteReportById(userId, reportId):** delete specific behavioral report for the given user
+### User
 
-#### Appointment
-- **createAppt(userId, date, providerId):** create new appointments for given user 
-- **getAppt(userId, isProvider):** get appointments for a given user/provider
-- **getApptById(userId, isProvider):** get specific appointment for a given user/provider
-- **updateAppt(userId, providerId, apptObj):** update specific appointment of a given user for a healthcare provider
-- **deleteAppt(userId, providerId):** delete specific appointment of a given user/ provider
+| Method                           | Description                                           |
+| -------------------------------- | ----------------------------------------------------- |
+| `signup(userObj)`                | Create a user record                                  |
+| `getUser(email)`                 | Get a user record using their email                   |
+| `getUsersOfProvider(userId, providerId)` | Get all user records of a provider         |
+| `updateUserPassword(userId, password)` | Update the user's password field             |
+| `updateUserProvider(userId, providerId)` | Update user’s healthcare provider           |
+
+### Report
+
+| Method                                       | Description                                                  |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| `createReport(userId, reportObj)`            | Create a behavioral report for the given user                |
+| `getReportById(userId, reportId)`            | Get specific behavioral report for the given user/provider   |
+| `getReports(userId isProvider)`              | Get all behavioral reports for the given user/provider        |
+| `getReportsBySearchTerm(userId, searchTerms)` | Get all behavioral reports based on search terms for the given user/provider |
+| `getReportStats(userId)`                     | Get stats for mood ratings and symptom tracking from all behavioral reports for the given user/provider |
+| `getReportStatsByUserId(userId)`             | Get stats for mood ratings and symptom tracking from all behavioral reports of a specific user for provider |
+| `updatedReportById(userId, reportId, updatedObj)` | Update specific behavioral report for the given user          |
+| `deleteReportById(userId, reportId)`         | Delete specific behavioral report for the given user          |
+
+### Appointment
+
+| Method                                     | Description                                               |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `createAppt(userId, date, providerId)`     | Create new appointments for given user                    |
+| `getAppt(userId, isProvider)`              | Get appointments for a given user/provider                |
+| `getApptById(userId, isProvider)`          | Get specific appointment for a given user/provider        |
+| `updateAppt(userId, providerId, apptObj)`  | Update specific appointment of a given user for a healthcare provider |
+| `deleteAppt(userId, providerId)`           | Delete specific appointment of a given user/provider      |
+
 
 
 ## Clear and direct call-outs<a name="callouts"></a>
+
 ### 1. Authentication & Authorization in Middleware
 - Authentication: Check if the user has a valid jwt token during login, else return 400 error.
 - Authorization: Verify if the user is a Healthcare Provider, else return 403 forbidden error.
 - Error handling - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
+
 ### 2. Indexes for performance and uniqueness when reasonable
 - User: Index for email
 - Behavioral Tracking Reports: Index for text search
+
 ### 3. At least one of text search, aggregations, and lookups
 - Text search in Behavioral Tracking Reports
 - Aggregated statistics of mood ratings in Behavioral Tracking Reports
+
 ### 4. CRUD Routes<a name="#4-crud-routes"></a> 
-**Login**
-- `POST /auth/signup` - Store user with their name, username, email, and encrypted password. 
-	- Return 400 error if email has been used.
-- `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. 
-	- Return 400 error if token does not match.
-- `PUT /auth/password` - If the user is logged in, store the incoming password using their userId. 
-	- Return 400 error if request fails
-- `POST /auth/logout` 
-	
-**Users**
-- `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers) 
-- *Tested but should verify edge cases*`GET /users/:id` (requires authentication) - returns user information with provided id 
-- `PUT /users/:id/provider` (requires authentication) - update user’s provider ID. 
+| Endpoint                    | Description                                                                                         |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Signup and Login**        |                                                                                                     |
+| `POST /auth/signup`         | Store user with their name, username, email, and encrypted password.                                |
+|                             | - Return 400 error if email has been used.                                                          |
+| `POST /auth/login`          | Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. |
+|                             | - Return 400 error if token does not match.                                                         |
+| `PUT /auth/password`        | If the user is logged in, store the incoming password using their userId.                           |
+|                             | - Return 400 error if request fails.                                                                 |
+| `POST /auth/logout`         |                                                                                                     |
+| **Users**                   |                                                                                                     |
+| `GET /users`                | (requires authorization) - returns array of all users (if Healthcare Providers)                      |
+| `GET /users/:id`            | (requires authentication) - returns user information with provided id                               |
+| `PUT /users/:id/provider`   | (requires authentication) - update user’s provider ID.                                               |
+| **Reports**                 |                                                                                                     |
+| `POST /reports`             | (requires authentication) - store report along with their userId.                                    |
+| `GET /reports`              | (requires authentication) - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users |
+| `GET /reports/stats`        | (requires authentication) - returns an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from all patients/users. If userId is in search params, healthcare providers should get an array |
+| `GET /reports/search`       | (requires authentication) - returns reports with that search term. If Healthcare Provider, should get array of reports with that search term from all patients/users |
+| `GET /reports/:id`          | (requires authentication) - returns the report with the provided id and that has their userId. If Healthcare Provider, should get specified report. |
+| `PUT /reports/:id`          | (requires authentication) - updates the report with the provided id and that has their userId       |
+| `DELETE /reports/:id`       | (requires authentication) - deletes report with provided id from specified user.                     |
+| **Appointments**            |                                                                                                     |
+| `POST /appointments`        | (requires authorization) -  Healthcare Providers can create and store the appointment information   |
+| `GET /appointments`         | (requires authentication) - returns all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users |
+| `GET /appointments/:id`     | (requires authentication) - returns the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment. |
+| `PUT /appointments/:id`     | (requires authorization) -  Healthcare Providers can update the appointment with the provided id and that has their userId |
+| `DELETE /appointments/:id`  | (requires authorization) -  Healthcare Providers can delete appointment with provided id from specified user. |
 
-**Reports** (requires authentication): If the user is logged in,
-- `POST /reports` - store report along with their userId.
-- `GET /reports` - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
-- `GET /reports/stats` - returns an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from all patients/users. If userId is in search params, healthcare providers should get an array 
-- `GET /reports/search` - returns reports with that search term. If Healthcare Provider, should get array of reports with that search term from all patients/users
-- `GET /reports/:id` - returns the report with the provided id and that has their userId. If Healthcare Provider, should get specified report.
-- `PUT /reports/:id` - updates the report with the provided id and that has their userId
-- `DELETE /reports/:id` - deletes report with provided id from specified user.
-
-**Appointments** (requires authentication): If the user is logged in,
-- `POST /appointments`(requires authorization) -  Healthcare Providers can create and store the appointment information 
-- `GET /appointments` - returns all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users
-- `GET /appointments/:id` - returns the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment.
-- `PUT /appointments/:id`(requires authorization) -  Healthcare Providers can update the appointment with the provided id and that has their userId
-- `DELETE /appointments/:id` (requires authorization)  - Healthcare Providers can delete appointment with provided id from specified user
 ### 5. Jest tests: 
 - Authentication, authorization, CRUD operations for Login, Users, Appointments, and Reports
 
