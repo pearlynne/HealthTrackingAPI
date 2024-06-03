@@ -9,6 +9,15 @@ const secret = "t33h33h00";
 
 let token;
 
+// Mustache
+router.get("/signup", (req, res, next) => {
+  res.render("auth_signup");
+});
+router.get("/login", (req, res, next) => {
+	res.render("auth_login");
+});
+
+
 router.post("/signup", async (req, res, next) => {
   if (
     !req.body.email ||
@@ -19,15 +28,9 @@ router.post("/signup", async (req, res, next) => {
     res.status(400).send("Incomplete information");
   } else {
     try {
-      const { name, email, password, roles, providerId } = req.body; 
+      const { name, email, password, roles } = req.body;
       const hash = await bcrypt.hash(password, 5);
-      const newUser = await userDAO.signup(
-        name,
-        email,
-        hash,
-        roles,
-        providerId
-      );
+      const newUser = await userDAO.signup(name, email, hash, roles);
       res.json(newUser);
     } catch (e) {
       if (e instanceof userDAO.BadDataError) {
@@ -44,20 +47,20 @@ router.post("/login", async (req, res, next) => {
     res.status(400).send("Email/password needed");
   } else {
     try {
-      const user = await userDAO.getUser(email); 
+      const user = await userDAO.getUser(email);
       if (!user) {
         res.status(401).send("User account does not exist");
       }
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (passwordMatch) {
         let data = {
-					name: user.name,
+          name: user.name,
           email: user.email,
           roles: user.roles,
           providerId: user.providerId,
           _id: user._id,
         };
-        token = jwt.sign(data, secret); 
+        token = jwt.sign(data, secret);
         res.json({ token });
       } else {
         res.status(401).send("Password does not match");
@@ -68,16 +71,9 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// https://stackoverflow.com/questions/34589272/how-to-set-authorization-headers-with-nodejs-and-express
-// https://stackoverflow.com/questions/71240608/where-should-i-set-the-authorization-header-after-create-the-token
-// router.all('*' , (req, res, next) =>
-//   if (!token) {
-//     console.log('token: undefined');
-//   } else {
-//     req.headers.authorization = 'Bearer ' + token;
-//   }
-//   next();
-// });
+router.get("/password", (req, res, next) => {
+  res.render("auth_password");
+});
 
 router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
@@ -97,8 +93,18 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
   }
 });
 
-router.post("/logout", async (req, res, next) => {  
-	res.sendStatus(404);
+router.post("/logout", async (req, res, next) => {
+  res.sendStatus(404);
 });
 
-module.exports = router;
+module.exports = {
+  routerAuth: router,
+  addHeader: (addHeader = (req, res, next) => {
+    if (!token) {
+      console.log("token: undefined");
+    } else {
+      req.headers.authorization = "Bearer " + token;
+    }
+    next();
+  }),
+};

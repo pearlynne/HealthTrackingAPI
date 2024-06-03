@@ -14,14 +14,14 @@ describe("Authentication routes", () => {
     name: "Jane C Smith",
     email: "janesmith@mail.com",
     password: "123qwerty",
-    roles: ["user"], 
+    // roles: ["user"], 
   };
 
   const user1 = {
     name: "Joe D Jackson",
     email: "joejackson@mail.com",
     password: "789mnbvc",
-    roles: ["user"], 
+    // roles: ["user"], 
   };
 
 	describe("before signup", () => {

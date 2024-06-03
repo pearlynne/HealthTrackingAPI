@@ -4,14 +4,20 @@ const router = Router({ mergeParams: true });
 const reportDAO = require("../daos/report");
 const { isAuthenticated } = require("../middleware/middleware");
 
+// Mustache: Comment out for tests
+router.get("/", (req, res, next) => {
+  res.render("reports_post");
+});
+
 // POST /reports - store report along with their userId.
 router.post("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
-  if (!req.body || JSON.stringify(req.body) === "{}") {
+  if (
+    Object.values(reportInfo).some((x) => x === "") ||
+    JSON.stringify(req.body) === "{}"
+  ) {
     res.status(404).send("Missing report information");
-  } else if (user._id !== reportInfo.userId) {
-    res.status(404).send("No access");
   } else {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
@@ -25,13 +31,15 @@ router.post("/", isAuthenticated, async (req, res, next) => {
 });
 
 // GET /reports - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
-router.get("/", isAuthenticated, async (req, res, next) => {
+router.get("/all", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
   try {
     const reports = await reportDAO.getReports(user._id, isProvider);
     if (reports.length === 0) {
-      res.status(404).send("There are no reports");
+      res
+        .status(404)
+        .render("reports_error", { message: "There are no reports" });
     } else {
       res.json(reports);
     }
@@ -53,7 +61,9 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         req.query.patientId
       );
       if (stats.length === 0) {
-        res.status(404).send("No stats available");
+        res
+          .status(404)
+          .render("reports_error", { message: "No stats available" });
       } else {
         res.json(stats);
       }
@@ -69,7 +79,6 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         res.json(stats);
       }
     } catch (e) {
-      console.log(e);
       next(e);
     }
   }
@@ -82,7 +91,7 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
   const isProvider = user.roles.includes("provider");
 
   if (!req.query.query) {
-    res.status(404).send("Insert search terms");
+    res.status(404).render("reports_search");
   } else {
     try {
       const results = await reportDAO.getReportsBySearchTerm(
@@ -91,12 +100,13 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
         isProvider
       );
       if (results.length === 0) {
-        res.status(404).send("No reports with such terms");
+        res
+          .status(404)
+          .render("reports_error", { message: "No reports with such terms" });
       } else {
         res.json(results);
       }
     } catch (e) {
-      console.log(e);
       next(e);
     }
   }
@@ -107,16 +117,24 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
   const isProvider = user.roles.includes("provider");
+
   try {
     const report = await reportDAO.getReportById(
       user._id,
       reportId,
       isProvider
     );
-    if (report.length === 0) {
-      res.status(404).send("There is no such report. You may not have access");
+    if (report === null) {
+      res.status(404).render("reports_error", {
+        message: "There is no such report. You may not have access",
+      });
     } else {
-      res.json(report);
+			// mustache - comment out for tests
+
+      res
+        .status(200)
+        .render("reports_id", { id: req.params.id, report: report });
+				// res.json(report)
     }
   } catch (e) {
     //Add error handling for ID
@@ -127,8 +145,11 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
 // PUT /reports/:id - updates the report with the provided id and that has their userId
 router.put("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
-  const reportInfo = req.body;
   const reportId = req.params.id;
+
+  const reportInfo = Object.fromEntries(
+    Object.entries(req.body).filter(([key, value]) => value !== "")
+  );
 
   if (!req.body || JSON.stringify(req.body) === "{}") {
     res.status(404).send("Missing report information");
@@ -140,12 +161,17 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
         reportInfo
       );
       if (updatedReport === null) {
-        res
-          .status(404)
-          .send("There is no such report. You may not have access");
+        res.status(404).render("reports_error", {
+					message: "There is no such report. You may not have access",
+				});
       } else {
-        res.json(updatedReport);
-      }
+				// // mustache - comment out for tests
+        res
+        .status(200)
+        .render("reports_id", { id: req.params.id, report: updatedReport });
+				// res.json(updatedReport)
+      
+			}
     } catch (e) {
       //Add error handling for ID
       next(e);
@@ -158,23 +184,20 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
 
-     try {
-      // Covers cases where user logged in doesnt match userId of reportId
-      const deletedReport = await reportDAO.deleteReportById(
-        user._id,
-        reportId
-      );
-      if (deletedReport === null) {
-				res.status(404).send("There is no such report. You may not have access")
-			} else {
-				res.status(200).send("Appointment deleted");
-
-			}
-      //Insert error handlign for ID issues?
-    } catch (e) {
-      next(e);
+  try {
+    const deletedReport = await reportDAO.deleteReportById(user._id, reportId);
+    if (deletedReport === null) {
+      res.status(404).render("reports_error", {
+        message: "There is no such report. You may not have access",
+      });
+    } else {
+      res
+        .status(200)
+        .render("reports_error", { message: "Appointment deleted" });
     }
- 
+  } catch (e) {
+    next(e);
+  }
 });
 
 module.exports = router;

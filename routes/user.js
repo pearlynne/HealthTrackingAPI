@@ -4,18 +4,27 @@ const router = Router({ mergeParams: true });
 const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
+// Mustache: Comment out for tests
+router.get("/:id/provider",  isAuthenticated,(req, res, next) => {
+  const userId = req.params.id;
+  if (req.user._id !== req.params.id) {
+    res.status(404).send("Not your Id");
+  } else {
+    res.render("user_provider", { id: userId });
+  }
+});
 // GET / Should get information of all patients for providers
 router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-		res.json(users);
+    res.json(users);
   } catch (e) {
     next(e);
   }
 });
 
-// GeT /:id Should get patient's information for provider; 
+// GeT /:id Should get patient's information for provider;
 // get own information for patientt
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   const userId = req.user._id;
@@ -54,7 +63,6 @@ router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
   if (!providerId || !userId || JSON.stringify(req.body) === "{}") {
     res.status(400).send("Provider ID needed");
   } else if (userId !== req.user._id) {
-		//TO FIX: Change status code
     res.status(404).send("You are not allowed to access others' provider");
   } else {
     try {

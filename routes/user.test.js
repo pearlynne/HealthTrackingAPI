@@ -14,28 +14,30 @@ describe("User routes", () => {
     name: "Jennifer A Jones",
     email: "jenjones@mail.com",
     password: "098poiuyt",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
 
   const provider1 = {
     name: "Jeremy B Johnson",
     email: "jeremyj@mail.com",
     password: "456zxcvb",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
 
   const user0 = {
     name: "Jane C Smith",
     email: "janesmith@mail.com",
     password: "123qwerty",
-    roles: ["user"],
+    // roles: ["user"],
   };
 
   const user1 = {
     name: "Joe D Jackson",
     email: "joejackson@mail.com",
     password: "789mnbvc",
-    roles: ["user"],
+    // roles: ["user"],
   };
 
 	beforeEach(async () => {
@@ -87,20 +89,21 @@ describe("User routes", () => {
 				{ roles: { $in: ["provider"] } },
 				{ name: 1, email: 1 }
 			);
+			
 			const res0 = await request(server).post("/auth/login").send(provider0);
       provider0Token = res0.body.token;  
-
+			
       const res2 = await request(server).post("/auth/login").send(user0);
       token0 = res2.body.token; 
-
+			
       const res3 = await request(server).post("/auth/login").send(user1);
       token1 = res3.body.token; 
-
+			
       await User.updateMany(
-        { roles: { $nin: ["provider"] } },
+				{ roles: { $nin: ["provider"] } },
         { $push: { providerId: providers[0]._id } }
       );
-
+			
 			users = await User.find(
 				{ roles: { $nin: ["provider"] } },
 				{ name: 1, email: 1}

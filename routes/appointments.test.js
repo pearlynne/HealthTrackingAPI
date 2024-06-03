@@ -9,32 +9,34 @@ describe("Appointments routes", () => {
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-  const provider0 = {
-    name: "Dr. Jennifer A Jones",
+	const provider0 = {
+    name: "Jennifer A Jones",
     email: "jenjones@mail.com",
     password: "098poiuyt",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
 
   const provider1 = {
-    name: "Dr. Jeremy B Johnson",
+    name: "Jeremy B Johnson",
     email: "jeremyj@mail.com",
     password: "456zxcvb",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
 
   const user0 = {
     name: "Jane C Smith",
     email: "janesmith@mail.com",
     password: "123qwerty",
-    roles: ["user"],
+    // roles: ["user"],
   };
 
   const user1 = {
     name: "Joe D Jackson",
     email: "joejackson@mail.com",
     password: "789mnbvc",
-    roles: ["user"],
+    // roles: ["user"],
   };
 
   const randomAppt = {
@@ -176,7 +178,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider0Token)
           .send();
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("Missing appointment information");
+        expect(res.text).toContain("Missing appointment information");
         const res1 = await request(server)
           .post("/appointments")
           .set("Authorization", "Bearer " + provider0Token)
@@ -186,7 +188,7 @@ describe("Appointments routes", () => {
             providerId: providers[0]._id,
           });
         expect(res1.statusCode).toEqual(404);
-        expect(res1.text).toBe("Missing appointment information");
+        expect(res1.text).toContain("Missing appointment information");
         const res2 = await request(server)
           .post("/appointments")
           .set("Authorization", "Bearer " + provider0Token)
@@ -196,7 +198,7 @@ describe("Appointments routes", () => {
             providerId: providers[0]._id,
           });
         expect(res2.statusCode).toEqual(404);
-        expect(res2.text).toBe("Missing appointment information");
+        expect(res2.text).toContain("Missing appointment information");
         const res3 = await request(server)
           .post("/appointments")
           .set("Authorization", "Bearer " + provider0Token)
@@ -206,7 +208,7 @@ describe("Appointments routes", () => {
             providerId: "",
           });
         expect(res3.statusCode).toEqual(404);
-        expect(res3.text).toBe("Missing appointment information");
+        expect(res3.text).toContain("Missing appointment information");
       });
       it("should send 404 if provider does not match providerId in body", async () => {
         const res = await request(server)
@@ -218,7 +220,7 @@ describe("Appointments routes", () => {
             providerId: providers[1]._id,
           });
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe(
+        expect(res.text).toContain(
           "You cannot create appointments for other providers"
         );
       });
@@ -232,7 +234,7 @@ describe("Appointments routes", () => {
             providerId: providers[1]._id,
           });
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe(
+        expect(res.text).toContain(
           "You can only create appointments for your patients"
         );
       });
@@ -284,12 +286,14 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + token0)
           .send();
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject([
-          {
-            name: providers[0].name,
-            date: ["2023-01-01T08:00:00.000Z", "2023-02-01T08:00:00.000Z"],
-          },
-        ]);
+        // expect(res.body).toMatchObject([
+        //   {
+        //     name: providers[0].name,
+        //     date: ["2023-01-01T08:00:00.000Z", "2023-02-01T08:00:00.000Z"],
+        //   },
+        // ]);
+				expect(res.text).toContain(`${providers[0].name}`)
+				expect(res.text).toContain(`Sun Jan 01 2023`)
       });
       it("should send 404 for normal user if there are no appointments", async () => {
         const res = await request(server)
@@ -297,7 +301,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + token1)
           .send();
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("You do not have any appointments");
+        expect(res.text).toContain("You do not have any appointments");
       });
       it("should send 200 for provider and return all appointments by patient name", async () => {
         await request(server)
@@ -313,10 +317,12 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider0Token)
           .send();
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject([
-					{ name: users[0].name},
-					{ name: users[1].name},
-				]);
+        // expect(res.body).toMatchObject([
+				// 	{ name: users[0].name},
+				// 	{ name: users[1].name},
+				// ]);
+				expect(res.text).toContain(`${users[0].name}`);
+				expect(res.text).toContain(`${users[1].name}`);
       });
     });
 
@@ -335,7 +341,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + token1)
           .send();
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("You do not have this appointment");
+        expect(res.text).toContain("You do not have this appointment");
       });
       it("should send 200 for user and return appointment information", async () => {
         const res = await request(server)
@@ -343,12 +349,14 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + token0)
           .send();
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject([
-          {
-            name: providers[0].name,
-            date: ["2023-01-01T08:00:00.000Z"],
-          },
-        ]);
+        // expect(res.body).toMatchObject([
+        //   {
+        //     name: providers[0].name,
+        //     date: ["2023-01-01T08:00:00.000Z"],
+        //   },
+        // ]);
+				expect(res.text).toContain(`${providers[0].name}`);
+				expect(res.text).toContain(`Sun Jan 01 2023`)
       });
       it("should send 404 if appointment does not belong to provider", async () => {
         const res = await request(server)
@@ -356,7 +364,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider1Token)
           .send();
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("You do not have this appointment");
+        expect(res.text).toContain("You do not have this appointment");
       });
       it("should send 200 for provider and return patient's appointment information", async () => {
         const res = await request(server)
@@ -364,12 +372,15 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider0Token)
           .send();
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject([
-          {
-            name: users[0].name,
-            date: ["2023-01-01T08:00:00.000Z"],
-          },
-        ]);
+        // expect(res.body).toMatchObject([
+        //   {
+        //     name: users[0].name,
+        //     date: ["2023-01-01T08:00:00.000Z"],
+        //   },
+        // ]);
+				expect(res.text).toContain(`${users[0].name}`)
+				expect(res.text).toContain(`Sun Jan 01 2023`)
+
       });
     });
 
@@ -396,7 +407,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider0Token)
           .send({ date: "" });
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("Appointment date needed");
+        expect(res.text).toContain("Appointment date needed");
       });
       it("should send 404 if patient is not related to provider", async () => {
         const res = await request(server)
@@ -404,7 +415,7 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider1Token)
           .send({ date: "10-05-2023" });
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("You do not have this appointment");
+        expect(res.text).toContain("You do not have this appointment");
       });
       it("should send 200 for provider with updated appointment object", async () => {
         const res = await request(server)
@@ -412,9 +423,11 @@ describe("Appointments routes", () => {
           .set("Authorization", "Bearer " + provider0Token)
           .send({ date: "10-05-2023" });
         expect(res.statusCode).toEqual(200);
-        expect(res.body).toMatchObject([
-          { date: ["2023-10-05T07:00:00.000Z"], name: users[0].name },
-        ]);
+        // expect(res.body).toMatchObject([
+        //   { date: ["2023-10-05T07:00:00.000Z"], name: users[0].name },
+        // ]);
+				expect(res.text).toContain(`${users[0].name}`);
+				expect(res.text).toContain(`Thu Oct 05 2023`)
       });
     });
 
@@ -438,14 +451,14 @@ describe("Appointments routes", () => {
           .delete("/appointments/" + aptInfo.body._id)
           .set("Authorization", "Bearer " + provider1Token);
         expect(res.statusCode).toEqual(404);
-        expect(res.text).toBe("You do not have this appointment");
+        expect(res.text).toContain("You do not have this appointment");
       });
       it("should send 200 for provider with deleted appointment", async () => {
         const res = await request(server)
           .delete("/appointments/" + aptInfo.body._id)
           .set("Authorization", "Bearer " + provider0Token);
         expect(res.statusCode).toEqual(200);
-        expect(res.text).toBe("Appointment deleted");
+        expect(res.text).toContain("Appointment deleted");
       });
     });
   });

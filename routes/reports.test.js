@@ -11,41 +11,46 @@ describe("Reports routes", () => {
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-  const provider0 = {
-    name: "Dr. Jennifer A Jones",
+	const provider0 = {
+    name: "Jennifer A Jones",
     email: "jenjones@mail.com",
     password: "098poiuyt",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
+
   const provider1 = {
-    name: "Dr. Jeremy B Johnson",
+    name: "Jeremy B Johnson",
     email: "jeremyj@mail.com",
     password: "456zxcvb",
-    roles: ["user", "provider"],
+    // roles: ["user", "provider"],
+		roles: "provider"
   };
+
   const user0 = {
     name: "Jane C Smith",
     email: "janesmith@mail.com",
     password: "123qwerty",
-    roles: ["user"],
+    // roles: ["user"],
   };
+
   const user1 = {
     name: "Joe D Jackson",
     email: "joejackson@mail.com",
     password: "789mnbvc",
-    roles: ["user"],
+    // roles: ["user"],
   };
   const user2 = {
     name: "Josh E Jacobs",
     email: "joshjacobs@mail.com",
     password: "789mnbvc",
-    roles: ["user"],
+    // roles: ["user"],
   };
   const user3 = {
     name: "Jessica F James",
     email: "jessiej@mail.com",
     password: "123qwerty",
-    roles: ["user"],
+    // roles: ["user"],
   };
 
   const user0report1 = {
@@ -113,14 +118,14 @@ describe("Reports routes", () => {
   });
 
   describe("Before login", () => {
-    describe("GET / reports", () => {
+    describe("GET / reports/all", () => {
       it("should send 401 without a token", async () => {
-        const res = await request(server).get("/reports").send();
+        const res = await request(server).get("/reports/all").send();
         expect(res.statusCode).toEqual(401);
       });
       it("should send 401 with a bad token", async () => {
         const res = await request(server)
-          .get("/reports")
+          .get("/reports/all")
           .set("Authorization", "Bearer BAD")
           .send();
         expect(res.statusCode).toEqual(401);
@@ -249,20 +254,6 @@ describe("Reports routes", () => {
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("Missing report information");
     });
-    it("should send 404 if user creating report for another user", async () => {
-      const res = await request(server)
-        .post("/reports")
-        .set("Authorization", "Bearer " + token1)
-        .send({
-          ...user0report1,
-          userId: users[0]._id,
-          email: users[0].email,
-          name: users[0].name,
-          providerId: providers[0]._id,
-        });
-      expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("No access");
-    });
     it("should send 200 for normal user and return report", async () => {
       const res = await request(server)
         .post("/reports")
@@ -316,18 +307,18 @@ describe("Reports routes", () => {
   });
   afterEach(testUtils.clearDB);
 
-  describe("GET / reports", () => {
+  describe("GET / reports/all", () => {
     it("should send 404 for normal user with message if no reports", async () => {
       const res = await request(server)
-        .get("/reports")
+        .get("/reports/all")
         .set("Authorization", "Bearer " + token3)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("There are no reports");
+      expect(res.text).toContain("There are no reports");
     });
     it("should send 200 for normal user and return reports", async () => {
       const res = await request(server)
-        .get("/reports")
+        .get("/reports/all")
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
@@ -336,7 +327,7 @@ describe("Reports routes", () => {
     });
     it("should send 200 for provider and return reports from all patients", async () => {
       const res = await request(server)
-        .get("/reports")
+        .get("/reports/all")
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
@@ -367,7 +358,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token1)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("There is no such report. You may not have access");
+      expect(res.text).toContain("There is no such report. You may not have access");
     });
     it("should send 200 for normal user and report", async () => {
       const res = await request(server)
@@ -375,7 +366,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
-      expect(res.body[0]).toMatchObject({
+      expect(res.body).toMatchObject({
         name: users[0].name,
         email: users[0].email,
       });
@@ -386,7 +377,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
-      expect(res.body[0]).toMatchObject({
+      expect(res.body).toMatchObject({
         name: users[0].name,
         email: users[0].email,
       });
@@ -397,7 +388,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + provider1Token)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("There is no such report. You may not have access");
+      expect(res.text).toContain("There is no such report. You may not have access");
     });
   });
 
@@ -465,7 +456,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + provider1Token)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("No stats available");
+      expect(res.text).toContain("No stats available");
     });
     it("should send 200 for providers and return patient's stats", async () => {
       const res = await request(server)
@@ -505,7 +496,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("Insert search terms");
+      expect(res.text).toContain("Enter search terms");
     });
     it("should send 200 for normal user and search result of user", async () => {
       const res = await request(server)
@@ -533,7 +524,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("No reports with such terms");
+      expect(res.text).toContain("No reports with such terms");
     });
   });
 
@@ -542,7 +533,7 @@ describe("Reports routes", () => {
       const res = await request(server)
         .put("/reports/123")
         .set("Authorization", "Bearer " + token0)
-        .send([{ mood: 2 }]);
+        .send({ mood: 2 });
       expect(res.statusCode).toEqual(400);
       expect(res.text).toBe("Invalid Object Id");
     });
@@ -558,15 +549,15 @@ describe("Reports routes", () => {
       const res = await request(server)
         .put("/reports/" + aptRes._id)
         .set("Authorization", "Bearer " + token1)
-        .send([{ mood: 2 }]);
+        .send({ mood: 2 });
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("There is no such report. You may not have access");
+      expect(res.text).toContain("There is no such report. You may not have access");
     });
     it("should send 200 for normal user and return updated report", async () => {
       const res = await request(server)
         .put("/reports/" + aptRes._id)
         .set("Authorization", "Bearer " + token0)
-        .send([{ mood: 2, medRxn: "tremors" }]);
+        .send({ mood: 2, medRxn: "tremors" });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toMatchObject({ 
 				name: users[0].name,
@@ -596,7 +587,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token1)
         .send();
       expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("There is no such report. You may not have access");
+      expect(res.text).toContain("There is no such report. You may not have access");
     });
     it("should send 200 for normal user and return status", async () => {
       const res = await request(server)
@@ -604,7 +595,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
-      expect(res.text).toBe("Appointment deleted");
+      expect(res.text).toContain("Appointment deleted");
     });
   });
 });

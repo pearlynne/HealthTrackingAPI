@@ -5,19 +5,19 @@ module.exports = {};
 
 // Store a user record
 module.exports.signup = async (name, email, hash, roles) => {
-  try {
-    return roles.includes("provider")
+	try {
+    return roles === 'provider'
       ? await User.create({
           name: name,
           email: email,
           password: hash,
-          roles: roles,
-        }) // Not sure if we can chain
+          roles: ["user", "provider"],
+        }) 
       : await User.create({
           name: name,
           email: email,
           password: hash,
-          roles: roles,
+          roles: ["user"],
         });
   } catch (e) {
     if (e.message.includes("duplicate")) {

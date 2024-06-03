@@ -6,10 +6,11 @@ module.exports = {};
 
 // Create a behavioral report for the given user
 module.exports.createReport = async (userId, reportObj) => {
-  const userInfo = await User.findById({ _id: userId });
+  const userInfo = await User.findById({ _id: userId }); 
   return await Report.create({
     name: userInfo.name,
     email: userInfo.email,
+		providerId: userInfo.providerId,
     userId: userId,
     ...reportObj,
   });
@@ -18,14 +19,14 @@ module.exports.createReport = async (userId, reportObj) => {
 // Get specific behavioral report for the given user (providers can retrieve)
 module.exports.getReportById = async (userId, reportId, isProvider) => {
   return isProvider
-    ? await Report.find(
+    ? await Report.findOne(
         { _id: reportId, providerId: userId },
         { userId: 0, providerId: 0, __v: 0 }
       ).lean()
-    : await Report.find(
+    : await Report.findOne(
         { _id: reportId, userId: userId },
         { userId: 0, providerId: 0, __v: 0 }
-      ).lean();
+      ).lean()
 };
 
 // Get all reports for given user (providers can retrieve all)
@@ -126,10 +127,10 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
 };
 
 module.exports.updateReportById = async (userId, reportId, updatedObj) => {
-  // To fix the object to modify
+  
   return await Report.findOneAndUpdate(
     { _id: reportId, userId: userId },
-    ...updatedObj,
+    {...updatedObj},
     {
       projection: { userId: 0, providerId: 0, __v: 0 },
       new: true,
@@ -138,6 +139,5 @@ module.exports.updateReportById = async (userId, reportId, updatedObj) => {
 };
 
 module.exports.deleteReportById = async (userId, reportId) => {
-  // To fix the object to modify
   return await Report.findOneAndDelete({ _id: reportId, userId: userId });
 };
