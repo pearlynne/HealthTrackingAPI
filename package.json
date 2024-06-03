@@ -4,9 +4,9 @@
   "description": "330-finalproj-Pearl",
   "main": "index.js",
   "scripts": {
-		"test": "jest --runInBand --coverage --coverageDirectory='coverage'",
+    "test": "jest --runInBand --coverage --coverageDirectory='coverage'",
     "tdd": "jest --watch --runInBand",
-    "start": "node index.js"
+    "start": "nodemon -e js,json,mustache index.js"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,10 @@
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.4"
+    "method-override": "^3.0.0",
+    "mongoose": "^8.3.4",
+    "mustache-express": "^1.3.2",
+    "nodemon": "^3.1.2"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.3.2",
