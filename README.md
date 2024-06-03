@@ -75,28 +75,29 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 
 ### DAOs
 #### User
-- **createUser(userObj):** create a user record
+- **signup(userObj):** create a user record
 - **getUser(email):** get a user record using their email
+- **getUsersOfProvider(userId, providerId)**: get all user records of a provider
 - **updateUserPassword(userId, password):** update the user's password field
 - **updateUserProvider(userId, providerId)**: update user’s healthcare provider
 
 #### Report
 - **createReport(userId, reportObj):** create a behavioral report for the given user
-- **getReportById(userId, reportId):** get a specific behavioral report for the given user
-- **getReports(userId isProvider):** get all behavioral reports for the given user
-- **getReportsBySearchTerm(userId, searchTerms):** get all behavioral reports for the given user based on search terms
-- **getReportStats(userId):** get stats for mood ratings and symptom tracking from all behavioral reports for the given user
+- **getReportById(userId, reportId):** get specific behavioral report for the given user/provider
+- **getReports(userId isProvider):** get all behavioral reports for the given user/provider
+- **getReportsBySearchTerm(userId, searchTerms):** get all behavioral reports for the given user/provider based on search terms
+- **getReportStats(userId):** get stats for mood ratings and symptom tracking from all behavioral reports for the given user/provider
+- **getReportStatsByUserId(userId):** get stats for mood ratings and symptom tracking from all behavioral reports of a specific user for provider
+- **updatedReportById(userId, reportId, updatedObj):** update specific behavioral report for the given user
+- **deleteReportById(userId, reportId):** delete specific behavioral report for the given user
 
 #### Appointment
 - **createAppt(userId, date, providerId):** create new appointments for given user 
-- **getAppt(userId, isProvider):** get appointments for a given user
-- **updateAppt(userId, providerId, apptObj):** update appointments of a given user for a healthcare provider
-- **deleteAppt(userId, providerId):** delete appointments of a given user for a healthcare provider
+- **getAppt(userId, isProvider):** get appointments for a given user/provider
+- **getApptById(userId, isProvider):** get specific appointment for a given user/provider
+- **updateAppt(userId, providerId, apptObj):** update specific appointment of a given user for a healthcare provider
+- **deleteAppt(userId, providerId):** delete specific appointment of a given user/ provider
 
-### Brief Routes: (see <a href="#4-crud-routes">CRUD Routes</a>)
-
-### Nice to haves
-- Front end forms for users, behavioral tracking reports, and apppointments 
 
 ## Clear and direct call-outs<a name="callouts"></a>
 ### 1. Authentication & Authorization in Middleware
