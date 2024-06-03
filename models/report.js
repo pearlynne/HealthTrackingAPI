@@ -18,7 +18,7 @@ const reportSchema = new mongoose.Schema({
 	providerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
-    required: true,
+    // required: true,
   },
 });
 
