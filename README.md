@@ -1,7 +1,7 @@
 # <p align="center"> 330 Final Project <br> Mental Health Behavioral Tracking </p>
 
 ## Table of contents
-1. [Self-evalation](#selfeval)
+1. [Self-evaluation](#selfeval)
 2. [Description of Scenario and Problem](#description)
 3. [General Design](#generaldesign)
 4. [Technical Components](#builtwith) 

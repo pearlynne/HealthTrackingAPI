@@ -6,7 +6,6 @@ const apptSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
-	// Use ISO date for now
   date: { type: Date, required: true }, 
   name: { type: String},
 	email: { type: String},
