@@ -3,39 +3,12 @@ const request = require("supertest");
 const server = require("../server");
 const testUtils = require("../test-utils");
 const User = require("../models/user");
+const { provider0, provider1, user0, user1 } = require("../models/demoData");
 
 describe("Appointments routes", () => {
   beforeAll(testUtils.connectDB);
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
-
-  const provider0 = {
-    name: "Dr. Jennifer A Jones",
-    email: "jenjones@mail.com",
-    password: "098poiuyt",
-    roles: ["user", "provider"],
-  };
-
-  const provider1 = {
-    name: "Dr. Jeremy B Johnson",
-    email: "jeremyj@mail.com",
-    password: "456zxcvb",
-    roles: ["user", "provider"],
-  };
-
-  const user0 = {
-    name: "Jane C Smith",
-    email: "janesmith@mail.com",
-    password: "123qwerty",
-    roles: ["user"],
-  };
-
-  const user1 = {
-    name: "Joe D Jackson",
-    email: "joejackson@mail.com",
-    password: "789mnbvc",
-    roles: ["user"],
-  };
 
   const randomAppt = {
     userId: "664a9d2f8ec0a9969454487e",
@@ -124,41 +97,37 @@ describe("Appointments routes", () => {
     });
   });
 
-
   describe("After login", () => {
     let token0;
     let token1;
-    let provider0Token; 
-    let provider1Token; 
-		let providers
-		let users
-		
+    let provider0Token;
+    let provider1Token;
+    let providers;
+    let users;
+
     beforeEach(async () => {
-			providers = await User.find(
-				{ roles: { $in: ["provider"] } },
-				{ name: 1 }
-			);
-			const res0 = await request(server).post("/auth/login").send(provider0);
-      provider0Token = res0.body.token; 
+      providers = await User.find(
+        { roles: { $in: ["provider"] } },
+        { name: 1 }
+      );
+      const res0 = await request(server).post("/auth/login").send(provider0);
+      provider0Token = res0.body.token;
 
       const res1 = await request(server).post("/auth/login").send(provider1);
-      provider1Token = res1.body.token; 
+      provider1Token = res1.body.token;
 
       const res2 = await request(server).post("/auth/login").send(user0);
-      token0 = res2.body.token; 
+      token0 = res2.body.token;
 
       const res3 = await request(server).post("/auth/login").send(user1);
-      token1 = res3.body.token; 
+      token1 = res3.body.token;
 
       await User.updateMany(
         { roles: { $nin: ["provider"] } },
         { $push: { providerId: providers[0]._id } }
       );
 
-			users = await User.find(
-				{ roles: { $nin: ["provider"] } },
-				{ name: 1 }
-			);
+      users = await User.find({ roles: { $nin: ["provider"] } }, { name: 1 });
     });
 
     describe("POST / appointments", () => {
@@ -248,8 +217,8 @@ describe("Appointments routes", () => {
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject({
           userId: users[0]._id.toString(),
-          date: "2023-01-01T08:00:00.000Z", 
-					// TO FIX: cannot not hardcode due to quotation marks
+          date: "2023-01-01T08:00:00.000Z",
+          // TO FIX: cannot not hardcode due to quotation marks
           providerId: providers[0]._id.toString(),
         });
       });
@@ -267,7 +236,7 @@ describe("Appointments routes", () => {
         });
 
       aptInfo = aptRes;
-			const aptRes1 = await request(server)
+      const aptRes1 = await request(server)
         .post("/appointments")
         .set("Authorization", "Bearer " + provider0Token)
         .send({
@@ -314,9 +283,9 @@ describe("Appointments routes", () => {
           .send();
         expect(res.statusCode).toEqual(200);
         expect(res.body).toMatchObject([
-					{ name: users[0].name},
-					{ name: users[1].name},
-				]);
+          { name: users[0].name },
+          { name: users[1].name },
+        ]);
       });
     });
 
@@ -381,7 +350,7 @@ describe("Appointments routes", () => {
           .send();
         expect(res.statusCode).toEqual(403);
         expect(res.text).toBe("Not healthcare provider");
-      }); 
+      });
       it("should send 400 with a bad appointment _id", async () => {
         const res = await request(server)
           .put("/appointments/123")

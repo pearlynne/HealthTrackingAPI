@@ -4,27 +4,14 @@ const jwt = require("jsonwebtoken");
 const server = require("../server");
 const testUtils = require("../test-utils");
 const User = require("../models/user");
+const { user0, user1 } = require("../models/demoData");
 
 describe("Authentication routes", () => {
   beforeAll(testUtils.connectDB);
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-  const user0 = {
-    name: "Jane C Smith",
-    email: "janesmith@mail.com",
-    password: "123qwerty",
-    roles: ["user"], 
-  };
-
-  const user1 = {
-    name: "Joe D Jackson",
-    email: "joejackson@mail.com",
-    password: "789mnbvc",
-    roles: ["user"], 
-  };
-
-	describe("before signup", () => {
+  describe("before signup", () => {
     describe("POST /", () => {
       it("should return 401", async () => {
         const res = await request(server).post("/auth/login").send(user1);
@@ -45,9 +32,9 @@ describe("Authentication routes", () => {
         expect(res.statusCode).toEqual(404);
       });
     });
-	})
+  });
 
-	describe("signup ", () => {
+  describe("signup ", () => {
     describe("POST /signup", () => {
       it("should return 400 without a password", async () => {
         const res = await request(server).post("/auth/signup").send({
@@ -82,10 +69,10 @@ describe("Authentication routes", () => {
     });
   });
 
-	describe.each([user0, user1])("User %#", (user) => {
+  describe.each([user0, user1])("User %#", (user) => {
     beforeEach(async () => {
       await request(server).post("/auth/signup").send(user0);
-      await request(server).post("/auth/signup").send(user1); 
+      await request(server).post("/auth/signup").send(user1);
     });
 
     describe("POST /", () => {
@@ -122,23 +109,23 @@ describe("Authentication routes", () => {
         expect(decodedToken.email).toEqual(user.email);
         expect(decodedToken.roles).toEqual(["user"]);
         expect(decodedToken._id).toMatch(
-          /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i,
+          /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i
         ); // mongo _id regex
         expect(decodedToken.password).toBeUndefined();
       });
     });
   });
 
-	describe("After all users login", () => {
+  describe("After all users login", () => {
     let token0;
-    let token1; 
+    let token1;
     beforeEach(async () => {
       await request(server).post("/auth/signup").send(user0);
       const res0 = await request(server).post("/auth/login").send(user0);
       token0 = res0.body.token;
       await request(server).post("/auth/signup").send(user1);
       const res1 = await request(server).post("/auth/login").send(user1);
-      token1 = res1.body.token; 
+      token1 = res1.body.token;
     });
 
     describe("PUT /password", () => {
@@ -187,9 +174,7 @@ describe("Authentication routes", () => {
           password: "123",
         });
         expect(loginRes1.statusCode).toEqual(200);
-      }); 
+      });
     });
-	});
-
-
+  });
 });

@@ -4,39 +4,13 @@ const jwt = require("jsonwebtoken");
 const server = require("../server");
 const testUtils = require("../test-utils");
 const User = require("../models/user");
+const { provider0, provider1, user0, user1 } = require("../models/demoData");
 
 describe("User routes", () => {
   beforeAll(testUtils.connectDB);
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-  const provider0 = {
-    name: "Jennifer A Jones",
-    email: "jenjones@mail.com",
-    password: "098poiuyt",
-    roles: ["user", "provider"],
-  };
-
-  const provider1 = {
-    name: "Jeremy B Johnson",
-    email: "jeremyj@mail.com",
-    password: "456zxcvb",
-    roles: ["user", "provider"],
-  };
-
-  const user0 = {
-    name: "Jane C Smith",
-    email: "janesmith@mail.com",
-    password: "123qwerty",
-    roles: ["user"],
-  };
-
-  const user1 = {
-    name: "Joe D Jackson",
-    email: "joejackson@mail.com",
-    password: "789mnbvc",
-    roles: ["user"],
-  };
 
 	beforeEach(async () => {
 		await request(server).post("/auth/signup").send(user0);
