@@ -5,8 +5,7 @@ const appointmentDAO = require("../daos/appointment");
 const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
-// POST /appointments
-// Healthcare provider can create appointments
+
 router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const patientId = req.body.userId;
@@ -44,9 +43,7 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
   }
 });
 
-// GET /appointments 
-// Provider users should get array of appointments from all patients/users
-// Patient users should get array of own appointments
+
 router.get("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
@@ -66,9 +63,7 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// GET /appointments/:id 
-// Provider users should get information from appointment id
-// Patient users should get information from appointment id
+
 router.get("/:id", isAuthenticated, async (req, res, next) => {
 	const user = req.user;
   const appointmentId = req.params.id;
@@ -90,8 +85,7 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// PUT /appointments/:id
-//  Provider users can update the appointment with the appointment id
+
 router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
@@ -122,8 +116,8 @@ router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   }
 });
 
-// DELETE /appointments/:id 
-// Provider users can delete appointment with appointment id
+
+
 router.delete("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;

@@ -126,7 +126,6 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
 };
 
 module.exports.updateReportById = async (userId, reportId, updatedObj) => {
-  // To fix the object to modify
   return await Report.findOneAndUpdate(
     { _id: reportId, userId: userId },
     ...updatedObj,

@@ -4,7 +4,6 @@ const router = Router({ mergeParams: true });
 const reportDAO = require("../daos/report");
 const { isAuthenticated } = require("../middleware/middleware");
 
-// POST /reports - store report along with their userId.
 router.post("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
@@ -24,7 +23,6 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// GET /reports - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
 router.get("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
@@ -40,7 +38,6 @@ router.get("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// GET /reports/stats - returns an aggregated stats of mood rating and symptom tracking. If Healthcare Provider, should get array of reports of aggregated stats from specific users
 
 router.get("/stats", isAuthenticated, async (req, res, next) => {
   const user = req.user;
@@ -69,13 +66,11 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         res.json(stats);
       }
     } catch (e) {
-      console.log(e);
       next(e);
     }
   }
 });
 
-// GET /reports/search - returns reports with that search term. If Healthcare Provider, should get array of reports with that search term from all patients/users
 router.get("/search", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const searchTerm = req.query.query;
@@ -96,13 +91,11 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
         res.json(results);
       }
     } catch (e) {
-      console.log(e);
       next(e);
     }
   }
 });
 
-// GET /reports/:id - returns the report with the provided id and that has their userId. If Healthcare Provider, should get specified report.
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
@@ -119,12 +112,10 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
       res.json(report);
     }
   } catch (e) {
-    //Add error handling for ID
     next(e);
   }
 });
 
-// PUT /reports/:id - updates the report with the provided id and that has their userId
 router.put("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
@@ -147,19 +138,15 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
         res.json(updatedReport);
       }
     } catch (e) {
-      //Add error handling for ID
       next(e);
     }
   }
 });
 
-// DELETE /reports/:id - deletes report with provided id from specified user.
 router.delete("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
-
      try {
-      // Covers cases where user logged in doesnt match userId of reportId
       const deletedReport = await reportDAO.deleteReportById(
         user._id,
         reportId
@@ -170,7 +157,6 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
 				res.status(200).send("Appointment deleted");
 
 			}
-      //Insert error handlign for ID issues?
     } catch (e) {
       next(e);
     }

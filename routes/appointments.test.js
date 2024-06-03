@@ -218,7 +218,6 @@ describe("Appointments routes", () => {
         expect(res.body).toMatchObject({
           userId: users[0]._id.toString(),
           date: "2023-01-01T08:00:00.000Z",
-          // TO FIX: cannot not hardcode due to quotation marks
           providerId: providers[0]._id.toString(),
         });
       });

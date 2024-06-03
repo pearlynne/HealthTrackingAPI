@@ -68,17 +68,6 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// https://stackoverflow.com/questions/34589272/how-to-set-authorization-headers-with-nodejs-and-express
-// https://stackoverflow.com/questions/71240608/where-should-i-set-the-authorization-header-after-create-the-token
-// router.all('*' , (req, res, next) =>
-//   if (!token) {
-//     console.log('token: undefined');
-//   } else {
-//     req.headers.authorization = 'Bearer ' + token;
-//   }
-//   next();
-// });
-
 router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
   if (!password || JSON.stringify(req.body) === "{}") {
