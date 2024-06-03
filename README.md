@@ -14,7 +14,7 @@
 **Achievements:**
 - **Implemented Routes**: I was able to design and set up RESTful API routes for user and provider authentication, daily tracking, and appointment management.
 - **Middleware**: I understood how to implement middleware appropriately, including error handling, authentication, and authorization middlewares, I also identified, but have yet to implement, potential middleware functions (e.g., varying response for providers and users - 
-`isProvider ? res.locals.userType = 'provider':  res.locals.userType = 'user';`
+`isProvider ? res.locals.userType = 'provider' :  res.locals.userType = 'user'`
 ).
 - **Testing Coverage**: Creating unit tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios.
 
@@ -52,7 +52,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 
 ### Requirements
 - #### Linux / Mac OS / Windows
-	- [MongobDB](#https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/) 
+	- [MongobDB](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/) 
 	- [Node.js](https://nodejs.org/en/download/package-manager/)
 - #### Dependencies
 	- Express
@@ -69,7 +69,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ### Models
 - **Users:** Username (unique, required), email (unique, required), password (required), name (required), role [Patient/Healthcare Provider], Healthcare Provider’s userId
   - Assume each user has only one Healthcare Provider assigned for now
-- **Behavior Tracking Report:** userId (required, ref), Date (required), Mood rating (required), Symptom tracker (Inattentiveness, hyperactivity, impulsitivity), Journaling, Medication reactions
+- **Behavior Tracking Report:** userId (required, ref), Date (required), Mood rating (required), Symptom tracker (Inattentiveness, hyperactivity, impulsitivity), Journaling, Medication reactions, Healthcare Provider's userId (required, ref)
   - Index for text search
 - **Appointment management:** userId (required, ref), Date (required), Time, userId (required), Healthcare Provider's userId (required, ref)
 
@@ -93,31 +93,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - **updateAppt(userId, providerId, apptObj):** update appointments of a given user for a healthcare provider
 - **deleteAppt(userId, providerId):** delete appointments of a given user for a healthcare provider
 
-<details>
-<summary><h3>Brief Routes: (see <a href="#4-crud-routes">CRUD Routes</a> for detailed description)</h3></summary> 
-
-- Login
-	- POST Signup, Login
-	- PUT Change Password
-- Users (requires authentication): If user is logged in,
-	- GET users (requires authorization) of healthcare provider, user by ID
-	- PUT provider
-- Reports (requires authentication): If the user is logged in,
-	- POST report
-	- GET report, report stats, report search, report by ID
-	- PUT report by ID
-	- DELETE report by ID
-- Appointments (requires authentication): If the user is logged in,
-	- POST appointments
-	- GET appointments, appointments by ID
-	- Only healthcare providers (requires authorization):
-		- PUT appointments by ID
-		- DELETE appointments by ID
-- Middleware
-	- *isAuthenticated* - should the user has a valid jwt token during login.
-	- *IsAuthorized* - should verify if the user is a Healthcare Provider, else return 403 forbidden error.
-	- *Error handling* - router.use(error, req, res, next) - handle errors where the provided appointment id or report id is not a valid ObjectId.
-</details> 
+### Brief Routes: (see <a href="#4-crud-routes">CRUD Routes</a>)
 
 ### Nice to haves
 - Front end forms for users, behavioral tracking reports, and apppointments 
@@ -135,18 +111,18 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - Aggregated statistics of mood ratings in Behavioral Tracking Reports
 ### 4. CRUD Routes<a name="#4-crud-routes"></a> 
 **Login**
-- *Tested* `POST /auth/signup` - Store user with their name, username, email, and encrypted password. 
+- `POST /auth/signup` - Store user with their name, username, email, and encrypted password. 
 	- Return 400 error if email has been used.
-- *Tested* `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. 
+- `POST /auth/login` -  Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. 
 	- Return 400 error if token does not match.
-- *Tested* `PUT /auth/password` - If the user is logged in, store the incoming password using their userId. 
+- `PUT /auth/password` - If the user is logged in, store the incoming password using their userId. 
 	- Return 400 error if request fails
-- *Tested* `POST /auth/logout` 
+- `POST /auth/logout` 
 	
 **Users**
-- *Tested* `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers) 
+- `GET /users` (requires authorization) - returns array of all users (if Healthcare Providers) 
 - *Tested but should verify edge cases*`GET /users/:id` (requires authentication) - returns user information with provided id 
-- *Tested* `PUT /users/:id/provider` (requires authentication) - update user’s provider ID. 
+- `PUT /users/:id/provider` (requires authentication) - update user’s provider ID. 
 
 **Reports** (requires authentication): If the user is logged in,
 - `POST /reports` - store report along with their userId.
@@ -158,7 +134,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - `DELETE /reports/:id` - deletes report with provided id from specified user.
 
 **Appointments** (requires authentication): If the user is logged in,
-- *Testing* `POST /appointments`(requires authorization) -  Healthcare Providers can create and store the appointment information 
+- `POST /appointments`(requires authorization) -  Healthcare Providers can create and store the appointment information 
 - `GET /appointments` - returns all appointments for their userId. If Healthcare Provider, should get array of appointments from all patients/users
 - `GET /appointments/:id` - returns the appointment with the provided id and that has their userId. If Healthcare Provider, should get specified appointment.
 - `PUT /appointments/:id`(requires authorization) -  Healthcare Providers can update the appointment with the provided id and that has their userId
@@ -168,7 +144,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 
 
 <details>
-<summary><h2><a href="archive">Archive</a></h2></summary> 
+<summary><h2><a name="archive">Archive</a></h2></summary> 
 
 ## Timeline + Plan <a name="tasks"></a>
 
@@ -219,7 +195,6 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- [x]  `PUT /appointments/:id`
 	- [x]  `DELETE /appointments/:id`
 </details>
-
 
 <details>
 <summary><b>Week 8</b></summary>
