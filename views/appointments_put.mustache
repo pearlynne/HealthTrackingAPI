@@ -1,0 +1,31 @@
+<html lang="en">
+	<body>
+<div>
+<h2>Appointment: {{id}}</h2>
+<ul>
+    {{#newAppointment}}
+        {{#.}}
+				{{name}}
+				{{#date}}
+        <li>{{.}}</li>
+				{{/date}}
+        {{/.}}      
+    {{/newAppointment}}
+</ul>
+	</div>
+<div>
+	<h2>Edit date for current apointment</h2>
+	
+			<form action="/appointments/{{id}}?_method=PUT" method="POST">
+							<label for="date">Date: </label>
+									<input type="text" id="date" name="date" value="PUT"><br>
+							<input type="submit"/>
+			</form>
+	<h2>Delete current apointment</h2>
+
+						<form action="/appointments/{{id}}?_method=DELETE" method="POST">
+				<input value="Delete report forever (You cannot undo this)" type="submit"/>
+			</form>
+</div>
+	</body>
+</html>

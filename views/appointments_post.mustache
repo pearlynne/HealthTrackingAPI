@@ -1,0 +1,37 @@
+<html lang="en">
+	<body>
+<div>{{message}}</div>
+<div>
+<div>
+<h2>Appointments</h2>
+
+	<ul>
+			{{#newAppointment}}
+					{{#.}}
+					Name: {{name}}
+					{{#date}}
+					<li>Date: {{.}}</li>
+					{{/date}}
+					<br>
+					{{/.}}
+			{{/newAppointment}}
+	</ul>
+</div>
+	</div>
+
+ 		<div>
+<h2>Create new appointment</h2>
+
+			<form action="/appointments/" method="POST">
+				<label for="userId">Enter userId: </label>
+								<input type="text" name="userId" placeholder="userId" />
+						<label for="date">date: </label>
+								<input type="text" id="date" name="date">
+				<label for="providerId">Enter providerId: </label>
+								<input type="text" id="providerId" name="providerId" > 
+						<input type="submit"/>
+			</form>
+		</div>
+		
+	</body>
+</html>

@@ -1,0 +1,24 @@
+<html lang="en">
+	<body>
+ 		<div>
+			<h2>Add a report</h2>
+			<form action="/reports/" method="POST">
+				<label for="date">Enter date: </label>
+								<input type="text" name="date" placeholder="date" /><br>
+						<label for="mood">Mood rating: </label>
+								<input type="number" id="mood" name="mood" min="1" max="5"><br>
+				<label for="inattentiveness">Inattentiveness rating: </label>
+								<input type="number" id="inattentiveness" name="inattentiveness" min="1" max="5"><br>
+						<label for="hyperactivity">Hyperactivity rating: </label>
+								<input type="number" id="hyperactivity" name="hyperactivity" min="1" max="5"><br>
+						<label for="impulsitivity">Impulsitivity rating: </label>
+								<input type="number" id="impulsitivity" name="impulsitivity" min="1" max="5"><br>
+						<label for="journalEntry">Journal Entry:</label>
+							<input type="text" id="journalEntry" name="journalEntry" value="none"><br>
+						<label for="medRxn">Reactions to medication:</label>
+							<input type="text" id="medRxn" name="medRxn" value="none"><br>
+						<input type="submit"/>
+		</div>
+ 		</form>
+	</body>
+</html>
