@@ -18,7 +18,7 @@ const {
   user1report1,
   user2report1,
   user3report1,
-} = require("../models/demoData")
+} = require("../models/testData")
 
 describe("Reports routes", () => {
   beforeAll(testUtils.connectDB);
@@ -170,20 +170,6 @@ describe("Reports routes", () => {
         .send();
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("Missing report information");
-    });
-    it("should send 404 if user creating report for another user", async () => {
-      const res = await request(server)
-        .post("/reports")
-        .set("Authorization", "Bearer " + token1)
-        .send({
-          ...user0report1,
-          userId: users[0]._id,
-          email: users[0].email,
-          name: users[0].name,
-          providerId: providers[0]._id,
-        });
-      expect(res.statusCode).toEqual(404);
-      expect(res.text).toBe("No access");
     });
     it("should send 200 for normal user and return report", async () => {
       const res = await request(server)

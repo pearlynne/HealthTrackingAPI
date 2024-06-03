@@ -3,7 +3,7 @@ const request = require("supertest");
 const server = require("../server");
 const testUtils = require("../test-utils");
 const User = require("../models/user");
-const { provider0, provider1, user0, user1 } = require("../models/demoData");
+const { provider0, provider1, user0, user1 } = require("../models/testData");
 
 describe("Appointments routes", () => {
   beforeAll(testUtils.connectDB);

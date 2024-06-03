@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const server = require("../server");
 const testUtils = require("../test-utils");
 const User = require("../models/user");
-const { user0, user1 } = require("../models/demoData");
+const { user0, user1 } = require("../models/testData");
 
 describe("Authentication routes", () => {
   beforeAll(testUtils.connectDB);
