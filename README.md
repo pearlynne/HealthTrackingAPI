@@ -1,41 +1,32 @@
 # <p align="center"> 330 Final Project <br> Mental Health Behavioral Tracking </p>
 
-## Updates <a name="updates"></a>
-### Working on [see [timeline](#tasks) for breakdown]: 
-- Create Demo
-- Practice Demo
-- Simplify jest tests
-- Add match object to jest tests
-- Self-eval in README 
-- Create middleware for patient is not providers'
-- Create frontend forms (TBD/Nice to have)
-
-
-### Completed: 
-- Express server 
-- Mongo connection
-- Model schemas for user, appointment, and reports
-- DAO methods for user, appointment, and reports
-- CRUD routes for auth, user, appointments, and reports
-- Middleware for authorization and authentication
-- Revision of routes
-- Creating demo collection for presentation and testing routes on Postman (40% complete; left with appointments and report routes)
-- Create Jest tests for all routes 
-- Review test utils for Jest test
-
-
-
 ## Table of contents
-1. [Updates](#updates)
-2. [Self-eval](#selfeval)
-3. [Description of Scenario and Problem](#description)
-4. [General Design](#generaldesign)
-5. [Technical Components](#builtwith) 
-6. [Clear and direct call-outs](#callouts)
-7. [Timeline and Plan](#tasks)
+1. [Self-evalation](#selfeval)
+2. [Description of Scenario and Problem](#description)
+3. [General Design](#generaldesign)
+4. [Technical Components](#builtwith) 
+5. [Clear and direct call-outs](#callouts)
+6. [Archive](#archive)
+	1. [Timeline and Plan](#tasks)
+	2. [Updates](#updates)
 
 ## Self-evaluation <a name="selfeval"></a>
-TBD
+**Achievements:**
+- **Implemented Routes**: I was able to design and set up RESTful API routes for user and provider authentication, daily tracking, and appointment management.
+- **Middleware**: I understood how to implement middleware appropriately, including error handling, authentication, and authorization middlewares, I also identified, but have yet to implement, potential middleware functions (e.g., varying response for providers and users - 
+`isProvider ? res.locals.userType = 'provider':  res.locals.userType = 'user';`
+).
+- **Testing Coverage**: Creating unit tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios.
+
+**Challenges and Solutions:**
+- **Handling Edge Cases and Jest Tests**: I had trouble with edge cases, espeically since I had created the routes prior to the tests. I ended up spending a lot of time writing comprehensive Jest tests before returning to my API routes to address them.
+- **Managing Different Response Bodies**: Handling different response bodies and figuring out the appropriate response codes (e.g., `403`, `409`, or `404`, for when a user was tryin to access another user's record) was tricky. I decided to create standardized response formats and error-handling middleware.
+- **MongoDB vs. Mongoose Return Types**: I wasn’t familiar with the differences between MongoDB and Mongoose return types, such as arrays versus objects (e.g., `[{ mood: 2 }]` vs `{ mood: 2 }` vs `[ mood: 2 ]`). I also had issues with chaining methods (e.g., `pretty()`, `lean()`). I chose to refactor the code for consistency.
+
+**Lessons Learned:**
+- **Test-Driven Development**: I realized the importance of creating Jest tests first to guide the development process and catch issues early. This allows for more reliable and maintainable code, without requiring constant revisions. 
+- **Understanding MongoDB's Nature**: I had a bit of a learning curve coming from a background more familiar with SQL. Since MongoDB is not a relational database, I had to learn data modeling and querying differently. There were several data inconsistencies due to my initial schema set up. I also found it challenging to perform complex queries involving multiple collections, aggregations, or join (e..g, `$unionwith` and `$facets`). 
+- **Code Refactoring and Modularizing**: I noticed some parts of the code, especially in Jest tests, were becoming overly complex or lengthy. I learned that most could be refactored or modularized for better readability and maintainability (e.g., test data for jest tests).
 
 ## Description of Scenario and Problem <a name="description"></a>
 
@@ -44,7 +35,6 @@ TBD
 - Its goal is to allow users to track their mental well-being offline, facilitating the identification of patterns.
 
 **What problem your project seeks to solve.**
-
 - One challenge in therapy is the gap between sessions, where users struggle to recall and discuss pertinent events from the past week(s). 
 - This project hopes to address this by enabling users to engage in brief daily records, not only aiding in recall but also helps users identify triggers and patterns. 
 - Healthcare providers can then leverage this data to offer targeted insights during sessions.
@@ -59,15 +49,22 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- **Appointment Route:** Users can post and get their appointments, while only healthcare providers can update or delete appointments. Providers can also retrieve all appointments for their patients/users.
 
 ## Technical Components <a name="builtwith"></a>
-### Dependencies
-- Express
-- MongoDB
-- Mongoose
-- Jests for unit tests
-- bcrypt for password hashing
-- jsonwebtoken for password tokens
 
-### Initial Set Up (To add)
+### Requirements
+- #### Linux / Mac OS / Windows
+	- [MongobDB](#https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/) 
+	- [Node.js](https://nodejs.org/en/download/package-manager/)
+- #### Dependencies
+	- Express
+	- Mongoose
+	- Jest for unit tests
+	- bcrypt for password hashing
+	- jsonwebtoken for password tokens
+### Installation Instructions
+- `npm install express mongoose jsonwebtoken bcrypt`
+- #### For testing
+	- `npm install --save-dev jest @shelf/jest-mongodb supertest`
+
 
 ### Models
 - **Users:** Username (unique, required), email (unique, required), password (required), name (required), role [Patient/Healthcare Provider], Healthcare Provider’s userId
@@ -169,18 +166,11 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ### 5. Jest tests: 
 - Authentication, authorization, CRUD operations for Login, Users, Appointments, and Reports
 
- 
+
+<details>
+<summary><h2><a href="archive">Archive</a></h2></summary> 
+
 ## Timeline + Plan <a name="tasks"></a>
-
-### In Progress
-
-
-**Week 9** 
-- [ ] (New addition) Create middleware for patient is not providers'
-- [ ] Create demo 
-- [ ] Complete README
-- [ ] Complete self-eval
-- [ ] Create frontend forms (TBD/Nice to have)
 
 ### Completed  
 <details>
@@ -243,4 +233,37 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - [x] Revise routes/daos/models 
 - [x] (New addition) Error handling for id
 - [x] (New addition) Review with Date issues, isProvider, edge cases 
+</details>
+
+<details>
+<summary><b>Week 9</b></summary>
+- [ ] (New addition) Create middleware for patient is not providers'
+- [x] Create demo 
+- [x] Complete README
+- [x] Complete self-eval
+- [x] Create frontend forms (TBD/Nice to have)
+</details>
+
+## Updates <a name="updates"></a>
+### Working on [see [timeline](#tasks) for breakdown]: 
+- Create Demo
+- Practice Demo
+- Self-eval in README 
+- Create middleware for patient is not providers'
+
+### Completed: 
+- Express server 
+- Mongo connection
+- Model schemas for user, appointment, and reports
+- DAO methods for user, appointment, and reports
+- CRUD routes for auth, user, appointments, and reports
+- Middleware for authorization and authentication
+- Revision of routes
+- Creating demo collection for presentation and testing routes on Postman (40% complete; left with appointments and report routes)
+- Create Jest tests for all routes 
+- Review test utils for Jest test
+- Simplify jest tests
+- Add match object to jest tests
+- Create frontend forms (TBD/Nice to have)
+
 </details>
