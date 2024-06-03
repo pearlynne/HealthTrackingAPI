@@ -11,22 +11,36 @@
 	2. [Updates](#updates)
 
 ## Self-evaluation <a name="selfeval"></a>
-**Achievements:**
-- **Implemented Routes**: I was able to design and set up RESTful API routes for user and provider authentication, daily tracking, and appointment management.
-- **Middleware**: I understood how to implement middleware appropriately, including error handling, authentication, and authorization middlewares, I also identified, but have yet to implement, potential middleware functions (e.g., varying response for providers and users - 
+**Approach and results:**
+- **Designed and Implemented RESTful API Routes:** Designed and set up RESTful API routes for user and provider authentication, daily tracking, and appointment management. It resulted in a functional and well-organized API that meets the project's requirements.
+- **Implemented Middleware Functions**: Approriately implemented middleware functions, including 
+	-	Validation middleware for JWT tokens before granting access to protected routes.
+	- Authorization middleware ensuring only authorized users can access sensitive endpoints.
+	- Error handling to manage errors effectively. 
+	- I also identified, but have yet to implement, potential middleware functions (e.g., varying response for providers and users - 
 `isProvider ? res.locals.userType = 'provider' :  res.locals.userType = 'user'`
-).
-- **Testing Coverage**: Creating unit tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios.
+). The middleware functions helped to improved security and robustness in handling API requests. 
+- **Comprehensive Testing with Jest**: Creating comprehensive tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios.
 
-**Challenges and Solutions:**
-- **Handling Edge Cases and Jest Tests**: I had trouble with edge cases, espeically since I had created the routes prior to the tests. I ended up spending a lot of time writing comprehensive Jest tests before returning to my API routes to address them.
+**What Worked Well**:
+- **Thorough Planning**: Taking the time to plan and design API routes and functionalities in the earlier weeks provided a clear structure. It required modifications along the way but the solid framework was beneficial. 
+- **Middleware Implementation**: Implementing middleware functions helped streamlined request handling.
+
+**What Didn't Work Well:**
+- **Handling Edge Cases**: Had trouble with edge cases, espeically since the routes were created prior to the tests. I ended up spending a lot of time writing comprehensive Jest tests before returning to my API routes to address them.
 - **Managing Different Response Bodies**: Handling different response bodies and figuring out the appropriate response codes (e.g., `403`, `409`, or `404`, for when a user was tryin to access another user's record) was tricky. I decided to create standardized response formats and error-handling middleware.
-- **MongoDB vs. Mongoose Return Types**: I wasn’t familiar with the differences between MongoDB and Mongoose return types, such as arrays versus objects (e.g., `[{ mood: 2 }]` vs `{ mood: 2 }` vs `[ mood: 2 ]`). I also had issues with chaining methods (e.g., `pretty()`, `lean()`). I chose to refactor the code for consistency.
+- **MongoDB vs. Mongoose Return Types**: I was unfamiliar and confuused by the differences between MongoDB and Mongoose return types, such as arrays versus objects (e.g., `[{ mood: 2 }]` vs `{ mood: 2 }` vs `[ mood: 2 ]`). I also had issues with chaining methods (e.g., `pretty()`, `lean()`). I chose to refactor the code for consistency but it led to data inconsistencies initially.
 
-**Lessons Learned:**
-- **Test-Driven Development**: I realized the importance of creating Jest tests first to guide the development process and catch issues early. This allows for more reliable and maintainable code, without requiring constant revisions. 
-- **Understanding MongoDB's Nature**: I had a bit of a learning curve coming from a background more familiar with SQL. Since MongoDB is not a relational database, I had to learn data modeling and querying differently. There were several data inconsistencies due to my initial schema set up. I also found it challenging to perform complex queries involving multiple collections, aggregations, or join (e..g, `$unionwith` and `$facets`). 
-- **Code Refactoring and Modularizing**: I noticed some parts of the code, especially in Jest tests, were becoming overly complex or lengthy. I learned that most could be refactored or modularized for better readability and maintainability (e.g., test data for jest tests).
+**Lessons Learned:** Aside from learning how to build an API from scratch,
+- **Test-Driven Development**: Learned the value of creating Jest tests first to guide the development process and catch issues early. This allows for more reliable and maintainable code, without requiring constant revisions. 
+- **Understanding MongoDB's Nature**: With familiarity in SQL, I had to adapt to MongoDB's data modeling and querying approaches. There were several data inconsistencies due to my initial schema set up. I also found it challenging to perform complex queries involving multiple collections, aggregations, or join (e..g, `$unionwith` and `$facets`). 
+
+**Improvements and Future Steps:**
+- **Code Refactoring:** Refactor code segments, especially in Jest tests, for better readability and maintainability.
+- **Modularization**: Breaking down and modularizing more code components for easier management and scalability.
+- **Edge Cases:** Address edge cases more comprehensively during development and testing phases. 
+- **Front-end forms**: It would also be nice to add front-end forms to the API.
+
 
 ## Description of Scenario and Problem <a name="description"></a>
 
@@ -57,7 +71,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - #### Dependencies
 	- Express
 	- Mongoose
-	- Jest for unit tests
+	- Jest for tests
 	- bcrypt for password hashing
 	- jsonwebtoken for password tokens
 ### Installation Instructions
@@ -130,12 +144,9 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 | --------------------------- | --------------------------------------------------------------------------------------------------- |
 | **Signup and Login**        |                                                                                                     |
 | `POST /auth/signup`         | Store user with their name, username, email, and encrypted password.                                |
-|                             | - Return 400 error if email has been used.                                                          |
 | `POST /auth/login`          | Find the user with the provided email/username. Use bcrypt to compare stored password with the incoming password. If they match, generate a JWT token. |
-|                             | - Return 400 error if token does not match.                                                         |
 | `PUT /auth/password`        | If the user is logged in, store the incoming password using their userId.                           |
-|                             | - Return 400 error if request fails.                                                                 |
-| `POST /auth/logout`         |                                                                                                     |
+| `POST /auth/logout`         | Should return 400                                                                               |
 | **Users**                   |                                                                                                     |
 | `GET /users`                | (requires authorization) - returns array of all users (if Healthcare Providers)                      |
 | `GET /users/:id`            | (requires authentication) - returns user information with provided id                               |
