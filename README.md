@@ -10,37 +10,46 @@
 	1. [Timeline and Plan](#tasks)
 	2. [Updates](#updates)
 
-## Self-evaluation <a name="selfeval"></a>
-**Approach and results:**
+## 📝 Self-evaluation <a name="selfeval"></a>
+**🛠️ Approach and results:**
 - **Designed and Implemented RESTful API Routes:** Designed and set up RESTful API routes for user and provider authentication, daily tracking, and appointment management. It resulted in a functional and well-organized API that meets the project's requirements.
-- **Implemented Middleware Functions**: Approriately implemented middleware functions, including 
+- **Implemented Middleware Functions**: Appropriately implemented middleware functions helped to improve security and robustness in handling API requests. These include
 	-	Validation middleware for JWT tokens before granting access to protected routes.
 	- Authorization middleware ensuring only authorized users can access sensitive endpoints.
 	- Error handling to manage errors effectively. 
-	- I also identified, but have yet to implement, potential middleware functions (e.g., varying response for providers and users - 
-`isProvider ? res.locals.userType = 'provider' :  res.locals.userType = 'user'`
-). The middleware functions helped to improved security and robustness in handling API requests. 
-- **Comprehensive Testing with Jest**: Creating comprehensive tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios.
+- **Comprehensive Testing with Jest**: Creating comprehensive tests took quite some time but I was able to achieve high test coverage with Jest, making sure the API works well in different scenarios (e.g., provider vs user with a provider vs user without a provider).
 
-**What Worked Well**:
-- **Thorough Planning**: Taking the time to plan and design API routes and functionalities in the earlier weeks provided a clear structure. It required modifications along the way but the solid framework was beneficial. 
-- **Middleware Implementation**: Implementing middleware functions helped streamlined request handling.
+**🎯 What Worked Well**:
+- **Thorough Planning**: Planning and designing API routes and functionalities in the earlier weeks for our prototype/proof oc concept helped provide a clear structure. It required modifications along the way but the solid framework was beneficial. 
+- **Error Handling**: It was convenient and easy implementing error handling throughout the application to ensure that errors were caught and handled effectively.
+- **Middleware Implementation**: Implementing middleware functions helped streamlined request handling. It helped that we had practice and the familiarity made it easy to identify potential middleware functions too. For example, one potential middleware function I plan to implement is varying the response for providers and users (i.e., `isProvider ? res.locals.userType = 'provider' :  res.locals.userType = 'user'`). 
 
-**What Didn't Work Well:**
-- **Handling Edge Cases**: Had trouble with edge cases, espeically since the routes were created prior to the tests. I ended up spending a lot of time writing comprehensive Jest tests before returning to my API routes to address them.
-- **Managing Different Response Bodies**: Handling different response bodies and figuring out the appropriate response codes (e.g., `403`, `409`, or `404`, for when a user was tryin to access another user's record) was tricky. I decided to create standardized response formats and error-handling middleware.
-- **MongoDB vs. Mongoose Return Types**: I was unfamiliar and confuused by the differences between MongoDB and Mongoose return types, such as arrays versus objects (e.g., `[{ mood: 2 }]` vs `{ mood: 2 }` vs `[ mood: 2 ]`). I also had issues with chaining methods (e.g., `pretty()`, `lean()`). I chose to refactor the code for consistency but it led to data inconsistencies initially.
+**🐛 What Didn't Work Well:**
+- **Handling Edge Cases**: Had trouble with edge cases, especially since the routes were created prior to the tests. I ended up spending a lot of time writing comprehensive Jest tests before returning to my API routes to address them.
+- **Managing Different Response Bodies**: Handling different response bodies and figuring out the appropriate response codes (e.g., `403`, `409`, or `404`, for when a user was trying to access another user's record) was tricky. I decided to create standardized response formats and error-handling middleware.
+- **MongoDB vs. Mongoose Return Types**: I was unfamiliar and confused by the differences between MongoDB and Mongoose return types, such as arrays versus objects (e.g., `[{ mood: 2 }]` vs `{ mood: 2 }` vs `[ mood: 2 ]`). I also didn't know that chaining methods were not always applicable (e.g., `pretty()`, `lean()`). Finally, I had trouble with `$group` and using `$unwind` to return the output in the form of a data structure that I wanted. I chose to refactor the code for consistency but it led to data inconsistencies initially. 
 
-**Lessons Learned:** Aside from learning how to build an API from scratch,
+**💡 Lessons Learned:** Aside from learning how to build an API from scratch,
 - **Test-Driven Development**: Learned the value of creating Jest tests first to guide the development process and catch issues early. This allows for more reliable and maintainable code, without requiring constant revisions. 
 - **Understanding MongoDB's Nature**: With familiarity in SQL, I had to adapt to MongoDB's data modeling and querying approaches. There were several data inconsistencies due to my initial schema set up. I also found it challenging to perform complex queries involving multiple collections, aggregations, or join (e..g, `$unionwith` and `$facets`). 
 
-**Improvements and Future Steps:**
-- **Code Refactoring:** Refactor code segments, especially in Jest tests, for better readability and maintainability.
-- **Modularization**: Breaking down and modularizing more code components for easier management and scalability.
-- **Edge Cases:** Address edge cases more comprehensively during development and testing phases. 
-- **Front-end forms**: It would also be nice to add front-end forms to the API.
+**🚀 Improvements and Future Steps:**
 
+- ***Code Quality and Structure:***
+	- **Code Refactoring:** Refactor code segments, especially in Jest tests, for better readability and maintainability.
+	- **Modularization:** Breaking down and modularizing more code components for easier management and scalability.
+		- **Create middleware:** Vary response for providers and users. 
+- ***Functionality Enhancements:***
+	- **Edge Cases:** There are potential edge cases to be addressed (e.g., patients with two providers). 
+	- **Add other fields for schema:** DOB, Time for appointments, returning name and user information
+- ***User Experience:***
+	- **Front-end forms:** It would be nice to add more front-end forms to the API for improved user interaction.
+	- **Form validation:** Password and email validation is incomplete.
+- ***Data Analysis and Visualization:***
+	- **Creating chart:** Since the API focuses on identifying patterns, it would helpful to create charts for visual aid.
+	- **Advanced Analytics:** Integrate advanced analytics to provide deeper insights into user data.
+- ***Security:***
+	- **HIPAA Compliance:** Ensure that the API complies with HIPAA regulations to protect patient data and maintain privacy standards.
 
 ## Description of Scenario and Problem <a name="description"></a>
 
@@ -61,6 +70,10 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 	- **User Route:** Users can change their passwords and provider (if any).
 	- **Behavioral Tracking Reports Route:** Users can post, update, get, and delete their daily behavioral tracking reports. Healthcare providers have access to all reports from their patients/users.
 	- **Appointment Route:** Users can post and get their appointments, while only healthcare providers can update or delete appointments. Providers can also retrieve all appointments for their patients/users.
+- Other features include:
+	- Text search in Behavioral Tracking Reports
+	- Aggregated statistics of mood ratings in Behavioral Tracking Reports
+	- Lookups from user information when displaying reports and appointments
 
 ## Technical Components <a name="builtwith"></a>
 
@@ -78,7 +91,6 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 - `npm install express mongoose jsonwebtoken bcrypt`
 - #### For testing
 	- `npm install --save-dev jest @shelf/jest-mongodb supertest`
-
 
 ### Models
 - **Users:** Username (unique, required), email (unique, required), password (required), name (required), role [Patient/Healthcare Provider], Healthcare Provider’s userId
@@ -138,6 +150,7 @@ The API utilizes MongoDB collections to manage user and provider functionalities
 ### 3. At least one of text search, aggregations, and lookups
 - Text search in Behavioral Tracking Reports
 - Aggregated statistics of mood ratings in Behavioral Tracking Reports
+- Lookups from user information when displaying reports and appointments
 
 ### 4. CRUD Routes<a name="#4-crud-routes"></a> 
 | Endpoint                    | Description                                                                                         |
