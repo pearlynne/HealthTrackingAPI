@@ -10,14 +10,14 @@ const {
   user0,
   user1,
   user2,
-  user3, 
+  user3,
   user0report1,
   user0report2,
   user0report3,
   user1report1,
   user2report1,
   user3report1,
-} = require("../models/testData")
+} = require("../models/testData");
 
 describe("Reports routes", () => {
   beforeAll(testUtils.connectDB);
@@ -170,7 +170,7 @@ describe("Reports routes", () => {
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("Missing report information");
     });
-    it("should send 200 for normal user and return report", async () => {
+    it("should send 200 for normal user with provider and return report", async () => {
       const res = await request(server)
         .post("/reports")
         .set("Authorization", "Bearer " + token0)
@@ -188,6 +188,28 @@ describe("Reports routes", () => {
         name: users[0].name,
         providerId: providers[0]._id.toString(),
       });
+    });
+    it("should send 200 for normal user without provider and return report", async () => {
+      const newUser = await User.findOneAndUpdate(
+        { name: user0.name },
+        { $unset: {providerId: ""} }
+      );
+      const res = await request(server)
+        .post("/reports")
+        .set("Authorization", "Bearer " + token0)
+        .send({
+          ...user0report1,
+          userId: newUser._id.toString(),
+        });
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toMatchObject({
+        ...user0report1,
+        date: "2022-12-10T08:00:00.000Z",
+        userId: newUser._id.toString(),
+        email: newUser.email,
+        name: newUser.name,
+      });
+			expect(res.body).not.toHaveProperty("providerId")
     });
   });
 
@@ -382,7 +404,7 @@ describe("Reports routes", () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toMatchObject({
         Patient: { name: users[0].name, email: users[0].email },
-				averageMood: 2.3333333333333335,
+        averageMood: 2.3333333333333335,
         Inattentiveness: 1,
         Hyperactivity: 2,
         Impulsitivity: 1.6666666666666667,
@@ -420,19 +442,19 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
-			expect(res.body).toHaveLength(2); 
-			expect(res.body[0]).toHaveProperty("journalEntry", 'tired');
-			expect(res.body[1]).toHaveProperty("journalEntry", 'tired');
+      expect(res.body).toHaveLength(2);
+      expect(res.body[0]).toHaveProperty("journalEntry", "tired");
+      expect(res.body[1]).toHaveProperty("journalEntry", "tired");
     });
     it("should send 200 for normal user and search result of user", async () => {
-			const res = await request(server)
+      const res = await request(server)
         .get("/reports/search?query=" + encodeURI("heart palpitations"))
         .set("Authorization", "Bearer " + provider0Token)
         .send();
       expect(res.statusCode).toEqual(200);
-			expect(res.body).toHaveLength(3); 
-			expect(res.body[0]).toHaveProperty("name", users[0].name);
-			expect(res.body[2]).toHaveProperty("name", users[1].name);
+      expect(res.body).toHaveLength(3);
+      expect(res.body[0]).toHaveProperty("name", users[0].name);
+      expect(res.body[2]).toHaveProperty("name", users[1].name);
     });
     it("should send 404 if search result is empty", async () => {
       const res = await request(server)
@@ -475,16 +497,16 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send([{ mood: 2, medRxn: "tremors" }]);
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toMatchObject({ 
-				name: users[0].name,
-				email: users[0].email,
-				mood: 2,
-				inattentiveness: 1,
-				hyperactivity: 2,
-				impulsitivity: 3,
-				journalEntry: 'tired',
-				medRxn: 'tremors'
-			});
+      expect(res.body).toMatchObject({
+        name: users[0].name,
+        email: users[0].email,
+        mood: 2,
+        inattentiveness: 1,
+        hyperactivity: 2,
+        impulsitivity: 3,
+        journalEntry: "tired",
+        medRxn: "tremors",
+      });
     });
   });
 
