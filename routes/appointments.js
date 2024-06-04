@@ -5,8 +5,6 @@ const appointmentDAO = require("../daos/appointment");
 const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
-// Mustache: Comment out for tests
-
 // POST /appointments
 // Healthcare provider can create appointments
 router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
@@ -41,7 +39,9 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
           apptDate,
           providerId
         );
-        res.send(newAppointment);
+				res.status(200).render("appointments_post", {
+					newAppointment: newAppointment,
+				});
       }
     } catch (e) {
       next(e);

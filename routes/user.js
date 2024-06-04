@@ -18,7 +18,8 @@ router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-    res.json(users);
+		res.render("users", { type: "Patient information", user: user });
+
   } catch (e) {
     next(e);
   }
@@ -39,7 +40,8 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
           .status(404)
           .send("You cannot access users that are not your patients");
       } else {
-        res.json(user);
+		res.render("users", { type: "Patient information", user: user });
+
       }
     } else {
       res.status(404).send("Not your Id");
@@ -48,7 +50,8 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     try {
       const user = await userDAO.getUser(email);
       const { _id, password, __v, roles, ...userInfo } = user;
-      res.json(userInfo);
+		res.render("users", { type: "Information", user: userInfo });
+
     } catch (e) {
       next(e);
     }
@@ -70,7 +73,9 @@ router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
         req.user._id,
         providerId
       );
-      res.json(updatedProvider);
+      // res.json(updatedProvider);
+			res.render("user_provider", { message: `Your new updated provider is: ${updatedProvider.providerId}`, id: userId, });
+
     } catch (e) {
       next(e);
     }

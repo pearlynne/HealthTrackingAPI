@@ -191,7 +191,7 @@ describe("User routes", () => {
       });
     });
 
-    describe("GET / /:id user %#", () => {
+    describe("GET /:id user %#", () => {
       it("should send 400 to normal user if id belongs to someone else", async () => {
         const res = await request(server)
           .get("/users/" + users[1]._id)

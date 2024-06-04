@@ -1,6 +1,78 @@
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My HealthTech API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1, h2 {
+            color: #800000; /* Dark red */
+        }
+        p {
+            font-size: 1.2em;
+        }
+        .link {
+            color: #800000; /* Dark red */
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin: 10px 0 5px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 20px);
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #800000; /* Dark red */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #660000; /* Darker red */
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
 	<body>
- 		<div>
+<div class="container">
 <h2>Sign up for an account</h2>
 			<form action="/auth/signup" method="POST">
 				<label for="name">Enter Name: </label>
@@ -8,7 +80,7 @@
 				<label for="email">Enter Email: </label>
 								<input type="text" name="email" placeholder="Email" /><br>
 				<label for="password">Enter password: </label>
-								<input type="text" name="password" placeholder="password" /><br>
+								<input type="text" name="password" placeholder="Password" /><br>
 				<input type="checkbox" id="roles" name="roles" value="provider">
 					<label for="roles">I am a provider</label><br> 
 						<input type="submit"/>

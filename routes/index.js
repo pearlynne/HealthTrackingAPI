@@ -20,4 +20,9 @@ router.use((err, req, res, next) => {
     res.status(500).send("Something else broke!");
   }
 });
+
+router.get("/", (req, res, next) => {
+  res.render("index");
+});
+
 module.exports = router;

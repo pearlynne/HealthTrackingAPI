@@ -22,7 +22,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
       if (newReport) {
-        res.json(newReport);
+        res.render("reports", { report: newReport, message: `New report created`});
       }
     } catch (e) {
       next(e);
@@ -40,8 +40,9 @@ router.get("/all", isAuthenticated, async (req, res, next) => {
       res
         .status(404)
         .render("reports_error", { message: "There are no reports" });
-    } else {
-      res.json(reports);
+    } else { 
+			res.render("reports", { report: reports, message: `Reports`});
+
     }
   } catch (e) {
     next(e);
@@ -76,9 +77,10 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
       if (stats.length === 0) {
         res.status(404).send("No stats/reports");
       } else {
-        res.json(stats);
+        res.render("report_stats", { report: stats });
       }
     } catch (e) {
+			console.log(e)
       next(e);
     }
   }
@@ -104,9 +106,10 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
           .status(404)
           .render("reports_error", { message: "No reports with such terms" });
       } else {
-        res.json(results);
+				console.log(searchTerm)
+        res.render("reports", { report: results, message: `Reports by search terms: ${req.query.query}` });
       }
-    } catch (e) {
+    } catch (e) { 
       next(e);
     }
   }
@@ -193,7 +196,7 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
     } else {
       res
         .status(200)
-        .render("reports_error", { message: "Appointment deleted" });
+        .render("reports_error", { message: "Report deleted" });
     }
   } catch (e) {
     next(e);

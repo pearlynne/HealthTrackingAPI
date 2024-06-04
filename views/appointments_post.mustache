@@ -1,37 +1,109 @@
+<!DOCTYPE html>
 <html lang="en">
-	<body>
-<div>{{message}}</div>
-<div>
-<div>
-<h2>Appointments</h2>
-
-	<ul>
-			{{#newAppointment}}
-					{{#.}}
-					Name: {{name}}
-					{{#date}}
-					<li>Date: {{.}}</li>
-					{{/date}}
-					<br>
-					{{/.}}
-			{{/newAppointment}}
-	</ul>
-</div>
-	</div>
-
- 		<div>
-<h2>Create new appointment</h2>
-
-			<form action="/appointments/" method="POST">
-				<label for="userId">Enter userId: </label>
-								<input type="text" name="userId" placeholder="userId" />
-						<label for="date">date: </label>
-								<input type="text" id="date" name="date">
-				<label for="providerId">Enter providerId: </label>
-								<input type="text" id="providerId" name="providerId" > 
-						<input type="submit"/>
-			</form>
-		</div>
-		
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My HealthTech API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1, h2 {
+            color: #800000; /* Dark red */
+        }
+        p {
+            font-size: 1.2em;
+        }
+        .link {
+            color: #800000; /* Dark red */
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin: 10px 0 5px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 20px);
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #800000; /* Dark red */
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #660000; /* Darker red */
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to My HealthTech API</h1>
+        <div>{{message}}</div>
+        <div>
+            <h2>Appointments</h2>
+            <ul>
+                {{#newAppointment}}
+                    {{#.}}
+                    <li>
+                        Name: {{name}}
+                        {{#date}}
+                        <br>Date: {{.}}
+                        {{/date}}
+                    </li>
+                    <br>
+                    {{/.}}
+                {{/newAppointment}}
+            </ul>
+        </div>
+        <div>
+            <h2>Create New Appointment</h2>
+            <form action="/appointments/" method="POST">
+                <label for="userId">Enter patient ID: </label>
+                <input type="text" name="userId" />
+                <label for="date">Date: </label>
+                <input type="text" id="date" name="date" />
+                <label for="providerId">Enter your ID: </label>
+                <input type="text" id="providerId" name="providerId" /> 
+                <input type="submit" />
+            </form>
+        </div>
+    </div>
+</body>
 </html>

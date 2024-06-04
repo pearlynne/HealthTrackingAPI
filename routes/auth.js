@@ -61,11 +61,13 @@ router.post("/login", async (req, res, next) => {
           _id: user._id,
         };
         token = jwt.sign(data, secret);
-        res.json({ token });
+        // res.json({ token });
+				console.log(token)
+				res.redirect('/reports/all')
       } else {
         res.status(401).send("Password does not match");
       }
-    } catch (e) {
+    } catch (e) { 
       next(e);
     }
   }
