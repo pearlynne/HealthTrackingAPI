@@ -1,0 +1,20 @@
+<html lang="en">
+	<body>
+<div>{{message}}</div>
+<div>
+<div>
+<h2>{{type}}</h2>
+
+	<ul>
+			{{#user}}
+					{{#.}}
+					<li>Name: {{name}}</li><br>
+					<li>Email: {{email}}</li><br>
+					{{/.}}
+			{{/user}}
+	</ul>
+</div>
+	</div>
+ 		
+	</body>
+</html>
