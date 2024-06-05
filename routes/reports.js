@@ -22,7 +22,12 @@ router.post("/", isAuthenticated, async (req, res, next) => {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
       if (newReport) {
-        res.render("reports", { report: newReport, message: `New report created`});
+				console.log(newReport.length)
+
+        res.render("report_post", {
+          report: newReport,
+          message: `New report created`,
+        });
       }
     } catch (e) {
       next(e);
@@ -36,13 +41,13 @@ router.get("/all", isAuthenticated, async (req, res, next) => {
   const isProvider = user.roles.includes("provider");
   try {
     const reports = await reportDAO.getReports(user._id, isProvider);
+		console.log(reports)
     if (reports.length === 0) {
       res
         .status(404)
         .render("reports_error", { message: "There are no reports" });
-    } else { 
-			res.render("reports", { report: reports, message: `Reports`});
-
+    } else {
+      res.render("reports", { report: reports, message: `Reports` });
     }
   } catch (e) {
     next(e);
@@ -80,7 +85,7 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         res.render("report_stats", { report: stats });
       }
     } catch (e) {
-			console.log(e)
+      console.log(e);
       next(e);
     }
   }
@@ -106,10 +111,12 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
           .status(404)
           .render("reports_error", { message: "No reports with such terms" });
       } else {
-				console.log(searchTerm)
-        res.render("reports", { report: results, message: `Reports by search terms: ${req.query.query}` });
+        res.render("reports", {
+          report: results,
+          message: `Reports by search terms: ${req.query.query}`,
+        });
       }
-    } catch (e) { 
+    } catch (e) {
       next(e);
     }
   }
@@ -132,12 +139,12 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
         message: "There is no such report. You may not have access",
       });
     } else {
-			// mustache - comment out for tests
+      // mustache - comment out for tests
 
       res
         .status(200)
         .render("reports_id", { id: req.params.id, report: report });
-				// res.json(report)
+      // res.json(report)
     }
   } catch (e) {
     //Add error handling for ID
@@ -154,8 +161,10 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
     Object.entries(req.body).filter(([key, value]) => value !== "")
   );
 
-  if (!req.body || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("Missing report information");
+  if (!req.body || JSON.stringify(reportInfo) === "{}") {
+    res
+      .status(404)
+      .render("reports_error", { message: "Missing report information" });
   } else {
     try {
       const updatedReport = await reportDAO.updateReportById(
@@ -165,16 +174,13 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
       );
       if (updatedReport === null) {
         res.status(404).render("reports_error", {
-					message: "There is no such report. You may not have access",
-				});
+          message: "There is no such report. You may not have access",
+        });
       } else {
-				// // mustache - comment out for tests
         res
-        .status(200)
-        .render("reports_id", { id: req.params.id, report: updatedReport });
-				// res.json(updatedReport)
-      
-			}
+          .status(200)
+          .render("reports_id", { id: req.params.id, report: updatedReport });
+      }
     } catch (e) {
       //Add error handling for ID
       next(e);
@@ -194,9 +200,7 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
         message: "There is no such report. You may not have access",
       });
     } else {
-      res
-        .status(200)
-        .render("reports_error", { message: "Report deleted" });
+      res.status(200).render("reports_error", { message: "Report deleted" });
     }
   } catch (e) {
     next(e);

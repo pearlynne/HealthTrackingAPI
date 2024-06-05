@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,7 @@
             margin: 0;
         }
         .container {
-            text-align: center;
+            text-align: left;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -26,7 +26,7 @@
             margin: auto;
         }
         h2 {
-            color: #800000; /* Dark red */
+            color: #800000; 
         }
         p {
             margin-top: 20px;
@@ -56,33 +56,43 @@
             width: calc(100% - 20px);
         }
         input[type="submit"] {
-            background-color: #800000; /* Dark red */
+            background-color: #800000; 
             border: none;
             color: white;
             cursor: pointer;
         }
         input[type="submit"]:hover {
-            background-color: #660000; /* Darker red */
+            background-color: #660000; 
         }
     </style>
 </head>
 <body>
     <div class="container">
-<div>{{message}}</div>
-<div>
-<div>
-<h2>{{type}}</h2>
-	<ul>
-			{{#user}}
-					{{#.}}
-					<li><h3>Name: {{name}}</li></h3>
-					<li>Email: {{email}}</li><br>
-					{{/.}}
-					<hr>
-			{{/user}}
-	</ul>
-</div>
-	</div>
- 		</div>
+			<h2>{{message}}</h2>
+			{{#report}}
+			{{#.}}
+			<ul>
+			<hr>
+				<li><h3>{{name}}'s Information </h3>
+				<ul>
+					<li>Name: {{name}} <br></li>
+					<li>Email: {{email}} <br></li>
+				<ul>
+					<li><u><h3>Date: {{date}} <h3></u></li>
+					<h3>Ratings</h3>
+					<li>Mood: {{mood}} <br></li>
+					<li>Inattentiveness: {{inattentiveness}} <br></li>
+					<li>Hyperactivity: {{hyperactivity}}<br></li>
+					<li>Impulsitivity: {{impulsitivity}}<br></li>
+					<h3>Entries</h3>
+					<li>Journal Entry: {{journalEntry}}<br></li>
+					<li>Medication Reactions: {{medRxn}}<br></li>
+				</ul>				</ul>
+				</li>
+				</ul>
+				{{/.}}
+				
+			{{/report}}
+		</div>
 	</body>
 </html>

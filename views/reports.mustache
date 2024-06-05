@@ -72,11 +72,15 @@
 			{{#report}}
 			{{#.}}
 			<ul>
+			<hr>
 				<li><h3>{{name}}'s Information </h3>
 				<ul>
-								<li>Date: {{date}} <br></li>
 					<li>Name: {{name}} <br></li>
 					<li>Email: {{email}} <br></li>
+				{{#reports}}
+				{{#.}}
+				<ul>
+					<li><u><h3>Date: {{date}} <h3></u></li>
 					<h3>Ratings</h3>
 					<li>Mood: {{mood}} <br></li>
 					<li>Inattentiveness: {{inattentiveness}} <br></li>
@@ -85,6 +89,9 @@
 					<h3>Entries</h3>
 					<li>Journal Entry: {{journalEntry}}<br></li>
 					<li>Medication Reactions: {{medRxn}}<br></li>
+				</ul>
+				{{/.}}
+				{{/reports}}
 				</ul>
 				</li>
 				</ul>

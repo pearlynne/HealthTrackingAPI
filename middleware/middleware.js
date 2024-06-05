@@ -30,7 +30,7 @@ const isProvider = async (req, res, next) => {
     if (user.roles.includes("provider")) {
       next();
     } else {
-      res.status(403).send("Not healthcare provider");
+      res.status(403).render("error", {message: "Not a healthcare provider"});
     }
   } catch (e) {
     next(e);

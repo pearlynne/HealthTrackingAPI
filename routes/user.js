@@ -18,7 +18,7 @@ router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-		res.render("users", { type: "Patient information", user: user });
+		res.render("users", { type: "Patient information", user: users });
 
   } catch (e) {
     next(e);

@@ -19,7 +19,7 @@ module.exports.getAppointments = async (userId, isProvider) => {
   return isProvider
     ? await Appointment.aggregate([
         { $match: { providerId: new mongoose.Types.ObjectId(userId) } },
-        { $group: { _id: "$name", date: { $push: "$date" } } },
+        { $group: { _id: "$name", date: { $push: { $dateToString: { format: "%d-%b-%Y", date: "$date" } } } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
         { $sort: { name: 1 } },
       ])
@@ -34,7 +34,7 @@ module.exports.getAppointments = async (userId, isProvider) => {
           },
         },
         { $unwind: "$Doctor" },
-        { $group: { _id: "$Doctor.name", date: { $push: "$date" } } },
+        { $group: { _id: "$Doctor.name", date: { $push: { $dateToString: { format: "%d-%b-%Y", date: "$date" } } } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
       ]);
 };
@@ -54,7 +54,7 @@ module.exports.getAppointmentById = async (
             providerId: new mongoose.Types.ObjectId(userId),
           },
         },
-        { $group: { _id: "$name", date: { $push: "$date" } } },
+        { $group: { _id: "$name", date: { $push: { $dateToString: { format: "%d-%b-%Y", date: "$date" } } } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
       ])
     : await Appointment.aggregate([
@@ -73,7 +73,7 @@ module.exports.getAppointmentById = async (
           },
         },
         { $unwind: "$Doctor" },
-        { $group: { _id: "$Doctor.name", date: { $push: "$date" } } },
+        { $group: { _id: "$Doctor.name", date: { $push: { $dateToString: { format: "%d-%b-%Y", date: "$date" } } } } },
         { $project: { _id: 0, name: "$_id", date: 1 } },
       ]);
 };
