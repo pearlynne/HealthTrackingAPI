@@ -90,7 +90,6 @@ router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
   const { date } = req.body; 
-
   if (!date) {
     res.status(404).send("Appointment date needed");
   } else {

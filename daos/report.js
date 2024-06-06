@@ -131,7 +131,7 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
 module.exports.updateReportById = async (userId, reportId, updatedObj) => {
   return await Report.findOneAndUpdate(
     { _id: reportId, userId: userId },
-    ...updatedObj,
+    { ...updatedObj },
     {
       projection: { userId: 0, providerId: 0, __v: 0 },
       new: true,

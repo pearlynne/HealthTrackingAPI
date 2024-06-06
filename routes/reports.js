@@ -122,16 +122,16 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
   const reportId = req.params.id;
-
   if (!req.body || JSON.stringify(req.body) === "{}") {
-    res.status(404).send("Missing report information");
-  } else {
-    try {
+		res.status(404).send("Missing report information");
+		} else {
+			try { 
       const updatedReport = await reportDAO.updateReportById(
         user._id,
         reportId,
         reportInfo
       );
+			console.log(updatedReport)
       if (updatedReport === null) {
         res
           .status(404)
@@ -157,7 +157,7 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
       if (deletedReport === null) {
 				res.status(404).send("There is no such report. You may not have access")
 			} else {
-				res.status(200).send("Appointment deleted");
+				res.status(200).send("Report deleted");
 			}
     } catch (e) {
       next(e);

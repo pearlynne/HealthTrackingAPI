@@ -505,7 +505,7 @@ describe("Reports routes", () => {
       const res = await request(server)
         .put("/reports/" + aptRes._id)
         .set("Authorization", "Bearer " + token0)
-        .send([{ mood: 2, medRxn: "tremors" }]);
+        .send({ mood: 2, medRxn: "tremors" });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toMatchObject({
         name: users[0].name,
