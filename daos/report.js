@@ -4,7 +4,7 @@ const User = require("../models/user");
 
 module.exports = {};
 
-// Create a behavioral report for the given user
+
 module.exports.createReport = async (userId, reportObj) => {
   const userInfo = await User.findById({ _id: userId });
   return await Report.create({
@@ -16,7 +16,7 @@ module.exports.createReport = async (userId, reportObj) => {
   });
 };
 
-// Get specific behavioral report for the given user (providers can retrieve)
+
 module.exports.getReportById = async (userId, reportId, isProvider) => {
   return isProvider
     ? await Report.find(
@@ -29,7 +29,7 @@ module.exports.getReportById = async (userId, reportId, isProvider) => {
       ).lean();
 };
 
-// Get all reports for given user (providers can retrieve all)
+
 module.exports.getReports = async (userId, isProvider) => {
   return isProvider
     ? await Report.find(
@@ -42,7 +42,7 @@ module.exports.getReports = async (userId, isProvider) => {
       ).lean();
 };
 
-// Get all reports for given user based on search terms
+
 module.exports.getReportsBySearchTerm = async (
   userId,
   searchTerms,
@@ -61,7 +61,7 @@ module.exports.getReportsBySearchTerm = async (
       ).sort({name :1});
 };
 
-// Get stats for mood and symptom from all reports for given user
+
 module.exports.getReportStats = async (userId, isProvider) => {
   return isProvider
     ? await Report.aggregate([
@@ -95,6 +95,7 @@ module.exports.getReportStats = async (userId, isProvider) => {
       ]);
 };
 
+
 module.exports.getReportStatsByUserId = async (providerId, userId) => {
   return await Report.aggregate([
     {
@@ -126,6 +127,7 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
   ]);
 };
 
+
 module.exports.updateReportById = async (userId, reportId, updatedObj) => {
   return await Report.findOneAndUpdate(
     { _id: reportId, userId: userId },
@@ -137,7 +139,7 @@ module.exports.updateReportById = async (userId, reportId, updatedObj) => {
   );
 };
 
+
 module.exports.deleteReportById = async (userId, reportId) => {
-  // To fix the object to modify
   return await Report.findOneAndDelete({ _id: reportId, userId: userId });
 };

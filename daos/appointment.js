@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 module.exports = {};
 
+
 module.exports.createAppointment = async (patientId, apptDate, providerId) => {
   const userInfo = await User.findById({ _id: patientId });
   return await Appointment.create({
@@ -14,6 +15,7 @@ module.exports.createAppointment = async (patientId, apptDate, providerId) => {
     providerId: providerId,
   });
 };
+
 
 module.exports.getAppointments = async (userId, isProvider) => {
   return isProvider
