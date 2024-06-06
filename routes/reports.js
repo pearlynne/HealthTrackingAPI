@@ -131,7 +131,6 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
         reportId,
         reportInfo
       );
-			console.log(updatedReport)
       if (updatedReport === null) {
         res
           .status(404)

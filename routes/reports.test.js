@@ -543,7 +543,7 @@ describe("Reports routes", () => {
         .set("Authorization", "Bearer " + token0)
         .send();
       expect(res.statusCode).toEqual(200);
-      expect(res.text).toBe("Appointment deleted");
+      expect(res.text).toBe("Report deleted");
     });
   });
 })
