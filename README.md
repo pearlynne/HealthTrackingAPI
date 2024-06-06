@@ -75,11 +75,11 @@
 The API utilizes MongoDB collections to manage user and provider functionalities.
 
 - Users and physicians can sign up, login, and logout using dedicated routes, with authentication required for accessing other API endpoints.
-- Authorization features ensure that healthcare providers have access to their patients/users' data, including the ability to update and delete appointments.
+- Authorization features ensure that healthcare providers have access to their patients/users' data, including the ability to create, update, and delete appointments.
 - Aside from login, other API endpoints include
-  - **User Route:** Users can change their passwords and provider (if any).
+  - **User Route:** Users can change their provider (if any).
   - **Behavioral Tracking Reports Route:** Users can post, update, get, and delete their daily behavioral tracking reports. Healthcare providers have access to all reports from their patients/users.
-  - **Appointment Route:** Users can post and get their appointments, while only healthcare providers can update or delete appointments. Providers can also retrieve all appointments for their patients/users.
+  - **Appointment Route:** Users can get their appointments, while only healthcare providers can create, update or delete appointments. Providers can also retrieve all appointments for their patients/users.
 - Other features include:
   - Text search in Behavioral Tracking Reports
   - Aggregated statistics of mood ratings in Behavioral Tracking Reports
