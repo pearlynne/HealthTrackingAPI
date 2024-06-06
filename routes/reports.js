@@ -4,6 +4,7 @@ const router = Router({ mergeParams: true });
 const reportDAO = require("../daos/report");
 const { isAuthenticated } = require("../middleware/middleware");
 
+
 router.post("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
@@ -21,6 +22,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
+
 router.get("/", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
@@ -35,6 +37,7 @@ router.get("/", isAuthenticated, async (req, res, next) => {
     next(e);
   }
 });
+
 
 router.get("/stats", isAuthenticated, async (req, res, next) => {
   const user = req.user;
@@ -67,6 +70,7 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
     }
   }
 });
+
 
 router.get("/search", isAuthenticated, async (req, res, next) => {
   const user = req.user;
@@ -113,6 +117,7 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+
 router.put("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportInfo = req.body;
@@ -140,6 +145,7 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
   }
 });
 
+
 router.delete("/:id", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const reportId = req.params.id;
@@ -152,7 +158,6 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
 				res.status(404).send("There is no such report. You may not have access")
 			} else {
 				res.status(200).send("Appointment deleted");
-
 			}
     } catch (e) {
       next(e);

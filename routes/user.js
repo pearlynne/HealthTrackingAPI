@@ -4,15 +4,17 @@ const router = Router({ mergeParams: true });
 const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
+
 router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-		res.json(users);
+    res.json(users);
   } catch (e) {
     next(e);
   }
 });
+
 
 router.get("/:id", isAuthenticated, async (req, res, next) => {
   const userId = req.user._id;
@@ -42,6 +44,7 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     }
   }
 });
+
 
 router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
   const { providerId } = req.body;

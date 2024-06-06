@@ -35,7 +35,7 @@ router.post("/", isAuthenticated, isProvider, async (req, res, next) => {
           apptDate,
           providerId
         ); 
-        res.send(newAppointment);
+        res.json(newAppointment);
       }
     } catch (e) {
       next(e);
@@ -89,7 +89,7 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
 router.put("/:id", isAuthenticated, isProvider, async (req, res, next) => {
   const user = req.user;
   const appointmentId = req.params.id;
-  const { date } = req.body; //should just be the date
+  const { date } = req.body; 
 
   if (!date) {
     res.status(404).send("Appointment date needed");

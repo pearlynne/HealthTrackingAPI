@@ -7,7 +7,6 @@ const userDAO = require("../daos/user");
 const { isAuthenticated } = require("../middleware/middleware");
 const secret = "t33h33h00";
 
-let token;
 
 router.post("/signup", async (req, res, next) => {
   if (
@@ -57,7 +56,7 @@ router.post("/login", async (req, res, next) => {
           providerId: user.providerId,
           _id: user._id,
         };
-        token = jwt.sign(data, secret); 
+        let token = jwt.sign(data, secret); 
         res.json({ token });
       } else {
         res.status(401).send("Password does not match");
@@ -67,6 +66,7 @@ router.post("/login", async (req, res, next) => {
     }
   }
 });
+
 
 router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
@@ -85,6 +85,7 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
     }
   }
 });
+
 
 router.post("/logout", async (req, res, next) => {  
 	res.sendStatus(404);
