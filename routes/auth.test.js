@@ -11,7 +11,7 @@ describe("Authentication routes", () => {
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-  describe("before signup", () => {
+  describe("Before signup", () => {
     describe("POST /", () => {
       it("should return 401", async () => {
         const res = await request(server).post("/auth/login").send(user1);
@@ -34,7 +34,7 @@ describe("Authentication routes", () => {
     });
   });
 
-  describe("signup ", () => {
+  describe("Signup ", () => {
     describe("POST /signup", () => {
       it("should return 400 without a password", async () => {
         const res = await request(server).post("/auth/signup").send({
@@ -110,7 +110,7 @@ describe("Authentication routes", () => {
         expect(decodedToken.roles).toEqual(["user"]);
         expect(decodedToken._id).toMatch(
           /^(?=[a-f\d]{24}$)(\d+[a-f]|[a-f]+\d)/i
-        ); // mongo _id regex
+        ); 
         expect(decodedToken.password).toBeUndefined();
       });
     });
@@ -129,21 +129,21 @@ describe("Authentication routes", () => {
     });
 
     describe("PUT /password", () => {
-      it("should reject bogus token", async () => {
+      it("should return 401 and reject bogus token", async () => {
         const res = await request(server)
           .put("/auth/password")
           .set("Authorization", "Bearer BAD")
           .send({ password: "123" });
         expect(res.statusCode).toEqual(401);
       });
-      it("should reject empty password", async () => {
+      it("should return 400 and reject empty password", async () => {
         const res = await request(server)
           .put("/auth/password")
           .set("Authorization", "Bearer " + token0)
           .send({ password: "" });
         expect(res.statusCode).toEqual(400);
       });
-      it("should change password for user0", async () => {
+      it("should return 200 and change password for user0", async () => {
         const res = await request(server)
           .put("/auth/password")
           .set("Authorization", "Bearer " + token0)
@@ -159,7 +159,7 @@ describe("Authentication routes", () => {
         const loginRes1 = await request(server).post("/auth/login").send(user1);
         expect(loginRes1.statusCode).toEqual(200);
       });
-      it("should change password for user1", async () => {
+      it("should return 2002 and change password for user1", async () => {
         const res = await request(server)
           .put("/auth/password")
           .set("Authorization", "Bearer " + token1)

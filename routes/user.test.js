@@ -11,13 +11,12 @@ describe("User routes", () => {
   afterAll(testUtils.stopDB);
   afterEach(testUtils.clearDB);
 
-
-	beforeEach(async () => {
-		await request(server).post("/auth/signup").send(user0);
-		await request(server).post("/auth/signup").send(user1);
-		await request(server).post("/auth/signup").send(provider0);
-		await request(server).post("/auth/signup").send(provider1);
-	});
+  beforeEach(async () => {
+    await request(server).post("/auth/signup").send(user0);
+    await request(server).post("/auth/signup").send(user1);
+    await request(server).post("/auth/signup").send(provider0);
+    await request(server).post("/auth/signup").send(provider1);
+  });
 
   describe("Before login", () => {
     describe("GET /", () => {
@@ -48,37 +47,37 @@ describe("User routes", () => {
     });
   });
 
-  describe("after login", () => {
+  describe("After login", () => {
     let token0;
     let token1;
-    let provider0Token; 
-    let provider1Token; 
-		let providers
-		let users
-		
+    let provider0Token;
+    let provider1Token;
+    let providers;
+    let users;
+
     beforeEach(async () => {
-			providers = await User.find(
-				{ roles: { $in: ["provider"] } },
-				{ name: 1, email: 1 }
-			);
-			const res0 = await request(server).post("/auth/login").send(provider0);
-      provider0Token = res0.body.token;  
+      providers = await User.find(
+        { roles: { $in: ["provider"] } },
+        { name: 1, email: 1 }
+      );
+      const res0 = await request(server).post("/auth/login").send(provider0);
+      provider0Token = res0.body.token;
 
       const res2 = await request(server).post("/auth/login").send(user0);
-      token0 = res2.body.token; 
+      token0 = res2.body.token;
 
       const res3 = await request(server).post("/auth/login").send(user1);
-      token1 = res3.body.token; 
+      token1 = res3.body.token;
 
       await User.updateMany(
         { roles: { $nin: ["provider"] } },
         { $push: { providerId: providers[0]._id } }
       );
 
-			users = await User.find(
-				{ roles: { $nin: ["provider"] } },
-				{ name: 1, email: 1}
-			);
+      users = await User.find(
+        { roles: { $nin: ["provider"] } },
+        { name: 1, email: 1 }
+      );
     });
 
     describe("PUT /:id/provider", () => {
@@ -180,7 +179,7 @@ describe("User routes", () => {
         expect(res.body).toMatchObject({
           name: users[0].name,
           email: users[0].email,
-          providerId: providers[0]._id.toString(), 
+          providerId: providers[0]._id.toString(),
         });
       });
       it("should send 200 to provider and return own information ", async () => {
@@ -208,8 +207,8 @@ describe("User routes", () => {
         ]);
       });
       it("should send 404 to provider if not their patient", async () => {
-				const res1 = await request(server).post("/auth/login").send(provider1);
-      provider1Token = res1.body.token; 
+        const res1 = await request(server).post("/auth/login").send(provider1);
+        provider1Token = res1.body.token;
         const res = await request(server)
           .get("/users/" + users[0]._id)
           .set("Authorization", "Bearer " + provider1Token)

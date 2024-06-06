@@ -114,7 +114,7 @@ describe("Reports routes", () => {
     });
   });
 
-  //After login
+  describe("After login", () => {
   let token0;
   let token1;
   let provider0Token;
@@ -170,6 +170,17 @@ describe("Reports routes", () => {
       expect(res.statusCode).toEqual(404);
       expect(res.text).toBe("Missing report information");
     });
+    it("should send 500 error if report creation fails", async () => {
+      const { mood, ...incompleteReport } = user0report1;
+      const res = await request(server)
+        .post("/reports")
+        .set("Authorization", "Bearer " + token0)
+        .send({
+          ...incompleteReport,
+        });
+      expect(res.status).toBe(500);
+      expect(res.text).toBe("Something else broke!");
+    });
     it("should send 200 for normal user with provider and return report", async () => {
       const res = await request(server)
         .post("/reports")
@@ -192,7 +203,7 @@ describe("Reports routes", () => {
     it("should send 200 for normal user without provider and return report", async () => {
       const newUser = await User.findOneAndUpdate(
         { name: user0.name },
-        { $unset: {providerId: ""} }
+        { $unset: { providerId: "" } }
       );
       const res = await request(server)
         .post("/reports")
@@ -209,7 +220,7 @@ describe("Reports routes", () => {
         email: newUser.email,
         name: newUser.name,
       });
-			expect(res.body).not.toHaveProperty("providerId")
+      expect(res.body).not.toHaveProperty("providerId");
     });
   });
 
@@ -242,8 +253,7 @@ describe("Reports routes", () => {
         providerId: providers[0]._id,
       },
     ]);
-  });
-  afterEach(testUtils.clearDB);
+  }); 
 
   describe("GET / reports", () => {
     it("should send 404 for normal user with message if no reports", async () => {
@@ -536,4 +546,5 @@ describe("Reports routes", () => {
       expect(res.text).toBe("Appointment deleted");
     });
   });
+})
 });

@@ -204,6 +204,18 @@ describe("Appointments routes", () => {
           "You can only create appointments for your patients"
         );
       });
+			it("should send 500 error if appointment creation fails", async () => {
+				const res = await request(server)
+				.post("/appointments")
+          .set("Authorization", "Bearer " + provider0Token)
+					.send({
+            userId: users[0]._id,
+            date: "22-01-2023",
+            providerId: providers[0]._id,
+          });
+				expect(res.status).toBe(500)
+				expect(res.text).toBe("Something else broke!");
+				})
       it("should send 200 for provider and return appointment object", async () => {
         const res = await request(server)
           .post("/appointments")
