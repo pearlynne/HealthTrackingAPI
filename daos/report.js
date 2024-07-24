@@ -8,7 +8,8 @@ module.exports = {};
 module.exports.createReport = async (userId, reportObj) => {
   const userInfo = await User.findById({ _id: userId });
   return await Report.create({
-    name: userInfo.name,
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
     email: userInfo.email,
     providerId: userInfo.providerId,
     userId: userId,
@@ -38,8 +39,9 @@ module.exports.getReports = async (userId, isProvider) => {
 				{
 					$group: {
 						_id: "$userId",
-						name: { $first: "$name" },
-						email: { $first: "$email" },
+						firstName: { $addToSet: "$firstName" },
+						lastName: { $addToSet: "$lastName" },
+						email: { $addToSet: "$email" },
 						reports: {
 							$push: {
 								date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
@@ -52,15 +54,16 @@ module.exports.getReports = async (userId, isProvider) => {
 							},
 						},
 					},
-				},{ $sort: {name: 1}}
+				},{ $sort: {firstName: 1}}
 			])
     : await Report.aggregate([
 			{ $match: { userId: new mongoose.Types.ObjectId(userId) } },
 			{
 				$group: {
 					_id: "$userId",
-					name: { $first: "$name" },
-					email: { $first: "$email" },
+					firstName: { $addToSet: "$firstName" },
+					lastName: { $addToSet: "$lastName" },
+					email: { $addToSet: "$email" },
 					reports: {
 						$push: {
 							date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
@@ -73,7 +76,7 @@ module.exports.getReports = async (userId, isProvider) => {
 						},
 					},
 				},
-			},{ $sort: {name: 1}}
+			}
 		])
 };
 

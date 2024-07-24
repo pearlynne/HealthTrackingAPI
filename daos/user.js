@@ -4,17 +4,19 @@ const mongoose = require("mongoose");
 module.exports = {};
 
 // Store a user record
-module.exports.signup = async (name, email, hash, roles) => {
-	try {
-    return roles === 'provider'
+module.exports.signup = async (firstName, lastName, email, hash, roles) => {
+  try {
+    return roles === "provider"
       ? await User.create({
-          name: name,
+          firstName: firstName,
+          lastName: lastName,
           email: email,
           password: hash,
           roles: ["user", "provider"],
-        }) 
+        })
       : await User.create({
-          name: name,
+          firstName: firstName,
+          lastName: lastName,
           email: email,
           password: hash,
           roles: ["user"],
