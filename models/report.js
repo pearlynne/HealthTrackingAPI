@@ -6,8 +6,9 @@ const reportSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
-	name: { type: String }, //cannot require true?
-	email: { type: String },
+  firstName: { type: String }, //cannot require true?
+  lastName: { type: String }, //cannot require true?
+  email: { type: String },
   date: { type: Date, required: true },
   mood: { type: Number, required: true },
   inattentiveness: { type: Number, required: true },
@@ -15,7 +16,7 @@ const reportSchema = new mongoose.Schema({
   impulsitivity: { type: Number, required: true },
   journalEntry: { type: String },
   medRxn: { type: String },
-	providerId: {
+  providerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     // required: true,
