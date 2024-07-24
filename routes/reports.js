@@ -24,6 +24,7 @@ router.post("/", isAuthenticated, async (req, res, next) => {
       if (newReport) {
 				console.log(newReport.length)
 
+
         res.render("report_post", {
           report: newReport,
           message: `New report created`,

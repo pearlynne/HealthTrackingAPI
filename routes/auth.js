@@ -19,18 +19,20 @@ router.get("/login", (req, res, next) => {
 
 
 router.post("/signup", async (req, res, next) => {
+	console.log(req.body)
   if (
     !req.body.email ||
     !req.body.password ||
-    !req.body.name ||
+    !req.body.firstName ||
+    !req.body.lastName ||
     JSON.stringify(req.body) === "{}"
   ) {
     res.status(400).send("Incomplete information");
   } else {
     try {
-      const { name, email, password, roles } = req.body;
+      const { firstName, lastName, email, password, roles } = req.body;
       const hash = await bcrypt.hash(password, 5);
-      const newUser = await userDAO.signup(name, email, hash, roles);
+      const newUser = await userDAO.signup(firstName, lastName, email, hash, roles);
       res.json(newUser);
     } catch (e) {
       if (e instanceof userDAO.BadDataError) {

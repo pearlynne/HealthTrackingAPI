@@ -4,8 +4,9 @@ const {routerAuth, addHeader} = require('./auth');
 
 // Modified to pass token for API////
 router.all('*', addHeader); //Comment out for tests; 
-
 router.use("/auth", routerAuth);
+router.use("/profile", require("./profile"));
+
 router.use("/users", require("./user"));
 router.use("/reports", require("./reports"));
 router.use("/appointments", require("./appointments"));

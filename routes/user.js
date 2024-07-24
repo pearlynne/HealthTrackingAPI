@@ -50,6 +50,7 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     try {
       const user = await userDAO.getUser(email);
       const { _id, password, __v, roles, ...userInfo } = user;
+			console.log(userInfo)
 		res.render("users", { type: "Information", user: userInfo });
 
     } catch (e) {
