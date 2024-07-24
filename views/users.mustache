@@ -10,10 +10,28 @@
             background-color: #f4f4f9;
             color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             height: 100vh;
             margin: 0;
+        }
+        .navbar {
+            width: 100%;
+            background-color: #800000; 
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        .navbar a:hover {
+            background-color: #660000; 
         }
         .container {
             text-align: center;
@@ -22,7 +40,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             min-width: 400px;
-						max-width: 600px;
+            max-width: 600px;
             margin: auto;
         }
         h2 {
@@ -35,6 +53,14 @@
         ul {
             list-style: none;
             padding: 0;
+						text-align: left;
+        }
+        .link {
+            color: #800080; 
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
         }
         li {
             margin-bottom: 5px;
@@ -56,33 +82,38 @@
             width: calc(100% - 20px);
         }
         input[type="submit"] {
-            background-color: #800000; /* Dark red */
-            border: none;
+            background-color: #800000;
             color: white;
             cursor: pointer;
         }
         input[type="submit"]:hover {
-            background-color: #660000; /* Darker red */
+            background-color: #660000; 
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="/appointments">Appointments</a>
+        <a href="/reports/all">Reports</a>
+        <a href="/profile">User Profile</a>
+    </div>
     <div class="container">
-<div>{{message}}</div>
-<div>
-<div>
-<h2>{{type}}</h2>
-	<ul>
-			{{#user}}
-					{{#.}}
-					<li><h3>Name: {{name}}</li></h3>
-					<li>Email: {{email}}</li><br>
-					{{/.}}
-					<hr>
-			{{/user}}
-	</ul>
-</div>
-	</div>
- 		</div>
-	</body>
+        <div>{{message}}</div>
+        <div>
+            <h2>{{type}}</h2>
+            <ul>
+                {{#user}}
+                    {{#.}}
+                    <li>Name: {{firstName}} {{lastName}}</li>
+                    <li>Email: {{email}}</li>
+                    <li>Contact Number: {{contactNum}}</li>
+										<br>
+                    <li>Medications: {{medication}}</li><br>
+                    {{/.}}
+                    <hr>
+                {{/user}}
+            </ul>
+        </div>
+    </div>
+</body>
 </html>

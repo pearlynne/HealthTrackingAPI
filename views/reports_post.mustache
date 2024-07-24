@@ -29,9 +29,11 @@
             color: #800000; /* Dark red */
         }
         p {
-            margin-top: 20px;
+            margin: 10px 0 5px;
+            /* margin-top: 20px; */
             font-size: 1.2em;
         }
+				
         ul {
             list-style: none;
             padding: 0;
@@ -43,6 +45,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+				.indv-opt {
+            display: flex;
+            flex-direction: column;
         }
         label {
             margin: 10px 0 5px;
@@ -64,6 +70,12 @@
         input[type="submit"]:hover {
             background-color: #660000; /* Darker red */
         }
+				.radio-buttons {
+            display: flex;
+            flex-direction: row;
+						gap: 10px;
+						justify-content: space-evenly;
+				}
     </style>
 </head>
 <body>
@@ -71,15 +83,87 @@
 			<h2>Add a report</h2>
 			<form action="/reports/" method="POST">
 				<label for="date">Enter date: </label>
-								<input type="text" name="date"/><br>
-						<label for="mood">Mood rating: </label>
-								<input type="number" id="mood" name="mood" min="1" max="5"><br>
-				<label for="inattentiveness">Inattentiveness rating: </label>
-								<input type="number" id="inattentiveness" name="inattentiveness" min="1" max="5"><br>
-						<label for="hyperactivity">Hyperactivity rating: </label>
-								<input type="number" id="hyperactivity" name="hyperactivity" min="1" max="5"><br>
-						<label for="impulsitivity">Impulsitivity rating: </label>
-								<input type="number" id="impulsitivity" name="impulsitivity" min="1" max="5"><br>
+						<input type="text" name="date"/>
+			<p>Mood rating: </p>
+					<div class="radio-buttons">
+					<div class="indv-opt">
+						<input type="radio" name="mood" value="0">
+						<label for="1">Negative</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="mood" value="2">
+						<label for="2">Somewhat negative</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="mood" value="3">
+						<label for="3">Neutral</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="mood" value="4">
+						<label for="4">Somewhat positive</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="mood" value="5">
+						<label for="5">Positive</label>
+					</div>
+					</div>
+				<p>Inattentiveness rating: </p>
+					<div class="radio-buttons">
+					<div class="indv-opt">
+						<input type="radio" name="inattentiveness" value="0">
+						<label for="0">Never/Rarely </label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="inattentiveness" value="1">
+						<label for="1">Sometimes</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="inattentiveness" value="2">
+						<label for="2">Often</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="inattentiveness" value="3">
+						<label for="3">Very often</label> 
+					</div>					
+					</div> 
+						<p>Hyperactivity rating: </p>
+					<div class="radio-buttons">
+					<div class="indv-opt">
+						<input type="radio" name="hyperactivity" value="0">
+						<label for="0">Never/Rarely </label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="hyperactivity" value="1">
+						<label for="1">Sometimes</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="hyperactivity" value="2">
+						<label for="2">Often</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="hyperactivity" value="3">
+						<label for="3">Very often</label> 
+					</div>					
+					</div> 
+						<p>Impulsitivity rating: </p>
+					<div class="radio-buttons">
+					<div class="indv-opt">
+						<input type="radio" name="impulsitivity" value="0">
+						<label for="0">Never/Rarely </label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="impulsitivity" value="1">
+						<label for="1">Sometimes</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="impulsitivity" value="2">
+						<label for="2">Often</label>
+					</div>
+					<div class="indv-opt">
+						<input type="radio" name="impulsitivity" value="3">
+						<label for="3">Very often</label> 
+					</div>					
+					</div> 
 						<label for="journalEntry">Journal Entry:</label>
 							<input type="text" id="journalEntry" name="journalEntry" value="none"><br>
 						<label for="medRxn">Reactions to medication:</label>
