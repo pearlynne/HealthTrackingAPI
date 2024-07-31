@@ -13,7 +13,7 @@ const reportSchema = new mongoose.Schema({
   mood: { type: Number, required: true },
   inattentiveness: { type: Number, required: true },
   hyperactivity: { type: Number, required: true },
-  impulsitivity: { type: Number, required: true },
+  impulsivity: { type: Number, required: true },
   journalEntry: { type: String },
   medRxn: { type: String },
   providerId: {
