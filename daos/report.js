@@ -31,6 +31,7 @@ module.exports.getReportById = async (userId, reportId, isProvider) => {
 };
 
 // Get all reports for given user (providers can retrieve all)
+// Sort by date and person
 module.exports.getReports = async (userId, isProvider) => {
   return isProvider
     ? await  
@@ -48,7 +49,7 @@ module.exports.getReports = async (userId, isProvider) => {
 								mood: "$mood",
 								inattentiveness: "$inattentiveness",
 								hyperactivity: "$hyperactivity",
-								impulsitivity: "$impulsitivity",
+								impulsivity: "$impulsivity",
 								journalEntry: "$journalEntry",
 								medRxn: "$medRxn",
 							},
@@ -70,7 +71,7 @@ module.exports.getReports = async (userId, isProvider) => {
 							mood: "$mood",
 							inattentiveness: "$inattentiveness",
 							hyperactivity: "$hyperactivity",
-							impulsitivity: "$impulsitivity",
+							impulsivity: "$impulsivity",
 							journalEntry: "$journalEntry",
 							medRxn: "$medRxn",
 						},
@@ -106,7 +107,7 @@ module.exports.getReportsBySearchTerm = async (
 								mood: "$mood",
 								inattentiveness: "$inattentiveness",
 								hyperactivity: "$hyperactivity",
-								impulsitivity: "$impulsitivity",
+								impulsivity: "$impulsivity",
 								journalEntry: "$journalEntry",
 								medRxn: "$medRxn",
 							}
@@ -132,7 +133,7 @@ module.exports.getReportsBySearchTerm = async (
 								mood: "$mood",
 								inattentiveness: "$inattentiveness",
 								hyperactivity: "$hyperactivity",
-								impulsitivity: "$impulsitivity",
+								impulsivity: "$impulsivity",
 								journalEntry: "$journalEntry",
 								medRxn: "$medRxn",
 							}
@@ -157,7 +158,7 @@ module.exports.getReportStats = async (userId, isProvider) => {
             averageMood: { $avg: "$mood" },
             Inattentiveness: { $avg: "$inattentiveness" },
             Hyperactivity: { $avg: "$hyperactivity" },
-            Impulsitivity: { $avg: "$impulsitivity" },
+            Impulsivity: { $avg: "$impulsivity" },
           },
         },
         { $sort: { name: 1 } },
@@ -172,7 +173,7 @@ module.exports.getReportStats = async (userId, isProvider) => {
             averageMood: { $avg: "$mood" },
             Inattentiveness: { $avg: "$inattentiveness" },
             Hyperactivity: { $avg: "$hyperactivity" },
-            Impulsitivity: { $avg: "$impulsitivity" },
+            Impulsivity: { $avg: "$impulsivity" },
           },
         },
       ]);
@@ -192,7 +193,7 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
         averageMood: { $avg: "$mood" },
         Inattentiveness: { $avg: "$inattentiveness" },
         Hyperactivity: { $avg: "$hyperactivity" },
-        Impulsitivity: { $avg: "$impulsitivity" },
+        Impulsivity: { $avg: "$impulsivity" },
       },
     },
     {
