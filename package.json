@@ -32,6 +32,7 @@
   "homepage": "https://github.com/pearlynne/UW-JS330-finalproject#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "d3": "^7.9.0",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
