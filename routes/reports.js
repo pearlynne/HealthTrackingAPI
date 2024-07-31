@@ -23,8 +23,6 @@ router.post("/", isAuthenticated, async (req, res, next) => {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
       if (newReport) {
 				console.log(newReport.length)
-
-
         res.render("report_post", {
           report: newReport,
           message: `New report created`,
@@ -36,13 +34,29 @@ router.post("/", isAuthenticated, async (req, res, next) => {
   }
 });
 
+// For d3 charts only
+router.get("/data", isAuthenticated, async (req, res, next) => {
+  const user = req.user;
+  const isProvider = user.roles.includes("provider");
+  try {
+    const reports = await reportDAO.getReports(user._id, isProvider);
+		
+    if (reports.length === 0) {
+      return res.status(404).json({ message: "There are no reports" });
+    } else {
+      return res.json(reports);
+    }
+  } catch (e) {
+    next(e);
+  }
+});
+
 // GET /reports - returns all reports for their userId. If Healthcare Provider, should get array of logs from all patients/users
 router.get("/all", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
   try {
     const reports = await reportDAO.getReports(user._id, isProvider);
-		console.log(reports)
     if (reports.length === 0) {
       res
         .status(404)
