@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -65,6 +65,7 @@
             background-color: #660000; 
         }
     </style>
+		
 </head>
 <body>
     <div class="container">
@@ -73,19 +74,19 @@
 			{{#.}}
 			<ul>
 			<hr>
-				<li><h3>{{firstName}} {{lastName}}'sInformation </h3>
+				<li><h3>{{firstName}} {{lastName}}'s Information </h3>
 				<ul>
 					<li>Name: {{firstName}} {{lastName}}<br></li>
 					<li>Email: {{email}} <br></li>
-				{{#reports}}
+ 				{{#reports}}
 				{{#.}}
 				<ul>
-					<li><u><h3>Date: {{date}} <h3></u></li>
+					<li><u><h3>Date: {{date}} </h3></u></li>
 					<h3>Ratings</h3>
 					<li>Mood: {{mood}} <br></li>
 					<li>Inattentiveness: {{inattentiveness}} <br></li>
 					<li>Hyperactivity: {{hyperactivity}}<br></li>
-					<li>Impulsitivity: {{impulsitivity}}<br></li>
+					<li>Impulsivity: {{impulsivity}}<br></li>
 					<h3>Entries</h3>
 					<li>Journal Entry: {{journalEntry}}<br></li>
 					<li>Medication Reactions: {{medRxn}}<br></li>
@@ -96,8 +97,9 @@
 				</li>
 				</ul>
 				{{/.}}
-				
 			{{/report}}
 		</div>
+		<script src="https://d3js.org/d3.v6.min.js"></script>
+    <script type= "module" src="/charts/index.js"></script>
 	</body>
 </html>
