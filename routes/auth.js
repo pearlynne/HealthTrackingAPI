@@ -11,15 +11,38 @@ let token;
 
 // Mustache
 router.get("/signup", (req, res, next) => {
-  res.render("auth_signup");
-});
-router.get("/login", (req, res, next) => {
-	res.render("auth_login");
+  res.render("auth_signup", {}, (err, html) => {
+    if (err) return next(err);
+    res.render("partials/layout", {
+      title: "Login",
+      content: html,
+    });
+  });
 });
 
+router.get("/login", (req, res, next) => {
+  res.render("auth_login", {}, (err, html) => {
+    if (err) return next(err);
+
+    res.render("partials/layout", {
+      title: "Login",
+      content: html,
+    });
+  });
+});
+
+router.get("/password", (req, res, next) => {
+  res.render("auth_password", {}, (err, html) => {
+    if (err) return next(err);
+
+    res.render("partials/layout", {
+      title: "Login",
+      content: html,
+    });
+  });
+});
 
 router.post("/signup", async (req, res, next) => {
-	console.log(req.body)
   if (
     !req.body.email ||
     !req.body.password ||
@@ -27,12 +50,31 @@ router.post("/signup", async (req, res, next) => {
     !req.body.lastName ||
     JSON.stringify(req.body) === "{}"
   ) {
-    res.status(400).send("Incomplete information");
+		res
+      .status(400)
+      .render(
+        "message",
+        { title: "Error", message: "Incomplete information" },
+        (err, html) => {
+          if (err) return next(err);
+
+          res.render("partials/layout", {
+            title: "Login",
+            content: html,
+          });
+        }
+      );
   } else {
     try {
       const { firstName, lastName, email, password, roles } = req.body;
       const hash = await bcrypt.hash(password, 5);
-      const newUser = await userDAO.signup(firstName, lastName, email, hash, roles);
+      const newUser = await userDAO.signup(
+        firstName,
+        lastName,
+        email,
+        hash,
+        roles
+      );
       res.json(newUser);
     } catch (e) {
       if (e instanceof userDAO.BadDataError) {
@@ -46,12 +88,39 @@ router.post("/signup", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password || JSON.stringify(req.body) === "{}") {
-    res.status(400).send("Email/password needed");
+
+    res
+      .status(400)
+      .render(
+        "message",
+        { title: "Error", message: "Email/password needed" },
+        (err, html) => {
+          if (err) return next(err);
+
+          res.render("partials/layout", {
+            title: "Login",
+            content: html,
+          });
+        }
+      );
   } else {
     try {
       const user = await userDAO.getUser(email);
       if (!user) {
-        res.status(401).send("User account does not exist");
+        // res.status(401).send("User account does not exist");
+        res.render(
+          "message",
+          { title: "Error",
+						message: "User account does not exist" },
+          (err, html) => {
+            if (err) return next(err);
+
+            res.render("partials/layout", {
+              title: "Login",
+              content: html,
+            });
+          }
+        );
       }
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (passwordMatch) {
@@ -63,24 +132,31 @@ router.post("/login", async (req, res, next) => {
           _id: user._id,
         };
         token = jwt.sign(data, secret);
-				res.redirect('/appointments/')
+        res.redirect("/appointments/");
       } else {
         res.status(401).send("Password does not match");
       }
-    } catch (e) { 
+    } catch (e) {
       next(e);
     }
   }
 });
 
-router.get("/password", (req, res, next) => {
-  res.render("auth_password");
-});
-
 router.put("/password", isAuthenticated, async (req, res, next) => {
   const { password } = req.body;
   if (!password || JSON.stringify(req.body) === "{}") {
-    res.status(400).send("New password needed");
+    // res.status(400).send("New password needed");
+    res
+      .status(400)
+      .render("message", { title: "Error",
+				message: "New password needed" }, (err, html) => {
+        if (err) return next(err);
+
+        res.render("partials/layout", {
+          title: "Login",
+          content: html,
+        });
+      });
   } else {
     try {
       const newHash = await bcrypt.hash(password, 5);
@@ -88,7 +164,18 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
         req.user._id,
         newHash
       );
-      res.json(updatedPassword);
+      // res.json(updatedPassword);
+			res
+      .render("message", { title: "Success!",
+				message: "Password Updated" }, (err, html) => {
+        if (err) return next(err);
+
+        res.render("partials/layout", {
+          title: "Login",
+          content: html,
+        });
+      });
+			
     } catch (e) {
       next(e);
     }
