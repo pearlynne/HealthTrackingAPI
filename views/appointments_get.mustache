@@ -1,0 +1,30 @@
+<div class="container">
+			<h2>For individual appointments:</h2>
+			<form action="/appointments/modify" method="GET">
+					<label for="query">Enter Appointment ID: </label>
+							<input type="text" name="query" />
+				<input type="submit"/>
+				</form>
+	<div>
+			<h2>Appointments</h2>
+			{{message}}
+			<ul>
+					{{#newAppointment}}
+							{{#.}}
+									<li>
+										First Name: {{name.firstName}}<br>
+										Last Name: {{name.lastName}}<br>
+										<br>
+										{{#date}}
+										{{#.}}
+										Date: {{.}} <br>
+										{{/.}}
+										{{/date}}
+								</li>
+								<hr>
+							{{/.}}      
+					{{/newAppointment}}
+			</ul>
+
+	</div>
+</div>
