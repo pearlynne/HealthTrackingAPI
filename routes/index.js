@@ -16,10 +16,35 @@ router.use((err, req, res, next) => {
     err.message.includes("Cast to ObjectId failed") ||
     err.message.includes("input must be a 24 character hex string")
   ) {
-    // res.status(400).send("Invalid Object Id");
-    res.status(400).render("error", { message: "Invalid Object Id" });
+    res
+      .status(400)
+      .render(
+        "message",
+        { title: "Error", message: "Invalid Object Id" },
+        (err, html) => {
+          if (err) return next(err);
+
+          res.render("partials/layout", {
+            title: "Login",
+            content: html,
+          });
+        }
+      );
   } else {
-    res.status(403).render("error", { message: "Something else broke!" });
+		console.log(err);
+    res
+      .status(403)
+      .render(
+        "message",
+        { title: "Error", message: "Something else broke!" },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Login",
+            content: html,
+          });
+        }
+      );
 
     // res.status(500).send("Something else broke!");
   }

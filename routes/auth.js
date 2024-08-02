@@ -59,7 +59,7 @@ router.post("/signup", async (req, res, next) => {
           if (err) return next(err);
 
           res.render("partials/layout", {
-            title: "Login",
+            title: "Sign up",
             content: html,
           });
         }
@@ -108,7 +108,7 @@ router.post("/login", async (req, res, next) => {
       const user = await userDAO.getUser(email);
       if (!user) {
         // res.status(401).send("User account does not exist");
-        res.render(
+        res.status(401).render(
           "message",
           { title: "Error",
 						message: "User account does not exist" },
@@ -132,9 +132,21 @@ router.post("/login", async (req, res, next) => {
           _id: user._id,
         };
         token = jwt.sign(data, secret);
-        res.redirect("/appointments/");
+        res.redirect("/reports/");
       } else {
-        res.status(401).send("Password does not match");
+        res.status(401).render(
+          "message",
+          { title: "Error",
+						message: "Password does not match" },
+          (err, html) => {
+            if (err) return next(err);
+
+            res.render("partials/layout", {
+              title: "Login",
+              content: html,
+            });
+          }
+        );
       }
     } catch (e) {
       next(e);
@@ -171,7 +183,7 @@ router.put("/password", isAuthenticated, async (req, res, next) => {
         if (err) return next(err);
 
         res.render("partials/layout", {
-          title: "Login",
+          title: "Password",
           content: html,
         });
       });

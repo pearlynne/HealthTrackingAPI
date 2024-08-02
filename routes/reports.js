@@ -4,9 +4,18 @@ const router = Router({ mergeParams: true });
 const reportDAO = require("../daos/report");
 const { isAuthenticated } = require("../middleware/middleware");
 
+router.get("/modify", isAuthenticated, async (req, res, next) => {
+  res.redirect(`/reports/${req.query.query}`);
+});
 // Mustache: Comment out for tests
-router.get("/", (req, res, next) => {
-  res.render("reports_post");
+router.get("/",  isAuthenticated, (req, res, next) => {
+  res.render("reports_post", {}, (err, html) => {
+    if (err) return next(err);
+    res.render("partials/layout", {
+      title: "Reports",
+      content: html,
+    });
+  });
 });
 
 // POST /reports - store report along with their userId.
@@ -17,16 +26,37 @@ router.post("/", isAuthenticated, async (req, res, next) => {
     Object.values(reportInfo).some((x) => x === "") ||
     JSON.stringify(req.body) === "{}"
   ) {
-    res.status(404).send("Missing report information");
+    res
+      .status(404)
+      .render(
+        "message",
+        { title: "Error", message: "Missing report information" },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Appointment",
+            content: html,
+          });
+        }
+      );
   } else {
     try {
       const newReport = await reportDAO.createReport(user._id, reportInfo);
       if (newReport) {
-				console.log(newReport.length)
-        res.render("report_post", {
-          report: newReport,
-          message: `New report created`,
-        });
+        res.render(
+          "reports_post",
+          {
+            report: newReport,
+            message: `New report created`,
+          },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Reports",
+              content: html,
+            });
+          }
+        );
       }
     } catch (e) {
       next(e);
@@ -40,7 +70,7 @@ router.get("/data", isAuthenticated, async (req, res, next) => {
   const isProvider = user.roles.includes("provider");
   try {
     const reports = await reportDAO.getReports(user._id, isProvider);
-		
+
     if (reports.length === 0) {
       return res.status(404).json({ message: "There are no reports" });
     } else {
@@ -60,9 +90,32 @@ router.get("/all", isAuthenticated, async (req, res, next) => {
     if (reports.length === 0) {
       res
         .status(404)
-        .render("reports_error", { message: "There are no reports" });
+        .render(
+          "message",
+          { title: "Error", message: "There are no reports" },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Appointment",
+              content: html,
+            });
+          }
+        );
     } else {
-      res.render("reports", { report: reports, message: `Reports` });
+      res.status(200).render(
+        "reports",
+        {
+          report: reports,
+          message: `Reports`,
+        },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Report",
+            content: html,
+          });
+        }
+      );
     }
   } catch (e) {
     next(e);
@@ -75,18 +128,42 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
   const user = req.user;
   const isProvider = user.roles.includes("provider");
 
-  if (req.query.patientId) {
+  if (req.query.query) {
     if (isProvider) {
       const stats = await reportDAO.getReportStatsByUserId(
         user._id,
-        req.query.patientId
+        req.query.query
       );
+      console.log(stats);
       if (stats.length === 0) {
         res
           .status(404)
-          .render("reports_error", { message: "No stats available" });
+          .render(
+            "message",
+            { title: "Error", message: "No stats available" },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Reports",
+                content: html,
+              });
+            }
+          );
       } else {
-        res.json(stats);
+        res.status(200).render(
+          "reports_stats",
+          {
+            report: stats,
+            message: `Reports`,
+          },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Report",
+              content: html,
+            });
+          }
+        );
       }
     } else {
       res.status(403).send("Forbidden");
@@ -95,9 +172,34 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
     try {
       const stats = await reportDAO.getReportStats(user._id, isProvider);
       if (stats.length === 0) {
-        res.status(404).send("No stats/reports");
+        res
+          .status(404)
+          .render(
+            "message",
+            { title: "Error", message: "No stats/reports" },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Reports",
+                content: html,
+              });
+            }
+          );
       } else {
-        res.render("report_stats", { report: stats });
+        res.status(200).render(
+          "reports_stats",
+          {
+            report: stats,
+            message: `Reports`,
+          },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Report",
+              content: html,
+            });
+          }
+        );
       }
     } catch (e) {
       console.log(e);
@@ -113,7 +215,13 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
   const isProvider = user.roles.includes("provider");
 
   if (!req.query.query) {
-    res.status(404).render("reports_search");
+    res.status(404).render("reports_search", {}, (err, html) => {
+      if (err) return next(err);
+      res.render("partials/layout", {
+        title: "Appointment",
+        content: html,
+      });
+    });
   } else {
     try {
       const results = await reportDAO.getReportsBySearchTerm(
@@ -124,12 +232,32 @@ router.get("/search", isAuthenticated, async (req, res, next) => {
       if (results.length === 0) {
         res
           .status(404)
-          .render("reports_error", { message: "No reports with such terms" });
+          .render(
+            "message",
+            { title: "Error", message: "No reports with such terms" },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Appointment",
+                content: html,
+              });
+            }
+          );
       } else {
-        res.render("reports", {
-          report: results,
-          message: `Reports by search terms: ${req.query.query}`,
-        });
+        res.status(200).render(
+          "reports",
+          {
+            report: results,
+            message: `Reports by search terms: ${req.query.query}`,
+          },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Report",
+              content: html,
+            });
+          }
+        );
       }
     } catch (e) {
       next(e);
@@ -150,16 +278,34 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
       isProvider
     );
     if (report === null) {
-      res.status(404).render("reports_error", {
-        message: "There is no such report. You may not have access",
-      });
+      res.status(404).render(
+        "message",
+        {
+          title: "Error",
+          message: "There is no such report. You may not have access",
+        },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Appointment",
+            content: html,
+          });
+        }
+      );
     } else {
-      // mustache - comment out for tests
-
       res
         .status(200)
-        .render("reports_id", { id: req.params.id, report: report });
-      // res.json(report)
+        .render(
+          "reports_id",
+          { id: req.params.id, report: report },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Appointment",
+              content: html,
+            });
+          }
+        );
     }
   } catch (e) {
     //Add error handling for ID
@@ -179,7 +325,17 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
   if (!req.body || JSON.stringify(reportInfo) === "{}") {
     res
       .status(404)
-      .render("reports_error", { message: "Missing report information" });
+      .render(
+        "message",
+        { title: "Error", message: "Missing report information" },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Appointment",
+            content: html,
+          });
+        }
+      );
   } else {
     try {
       const updatedReport = await reportDAO.updateReportById(
@@ -188,13 +344,36 @@ router.put("/:id", isAuthenticated, async (req, res, next) => {
         reportInfo
       );
       if (updatedReport === null) {
-        res.status(404).render("reports_error", {
-          message: "There is no such report. You may not have access",
-        });
+        res
+          .status(404)
+          .render(
+            "message",
+            {
+              title: "Error",
+              message: "There is no such report. You may not have access",
+            },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Appointment",
+                content: html,
+              });
+            }
+          );
       } else {
         res
           .status(200)
-          .render("reports_id", { id: req.params.id, report: updatedReport });
+          .render(
+            "reports_id",
+            { id: req.params.id, report: updatedReport },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Appointment",
+                content: html,
+              });
+            }
+          );
       }
     } catch (e) {
       //Add error handling for ID
@@ -211,12 +390,38 @@ router.delete("/:id", isAuthenticated, async (req, res, next) => {
   try {
     const deletedReport = await reportDAO.deleteReportById(user._id, reportId);
     if (deletedReport === null) {
-      res.status(404).render("reports_error", {
-        message: "There is no such report. You may not have access",
-      });
+			res
+          .status(404)
+          .render(
+            "message",
+            {
+              title: "Error",
+              message: "There is no such report. You may not have access",
+            },
+            (err, html) => {
+              if (err) return next(err);
+              res.render("partials/layout", {
+                title: "Appointment",
+                content: html,
+              });
+            }
+          );
     } else {
-      res.status(200).render("reports_error", { message: "Report deleted" });
-    }
+      res.status(200).render(
+				"message",
+				{
+					title: "Success",
+					message: "Report deleted",
+				},
+				(err, html) => {
+					if (err) return next(err);
+					res.render("partials/layout", {
+						title: "Appointment",
+						content: html,
+					});
+				}
+			);
+		}
   } catch (e) {
     next(e);
   }

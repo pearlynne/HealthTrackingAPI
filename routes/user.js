@@ -5,21 +5,23 @@ const userDAO = require("../daos/user");
 const { isAuthenticated, isProvider } = require("../middleware/middleware");
 
 // Mustache: Comment out for tests
-router.get("/:id/provider",  isAuthenticated,(req, res, next) => {
-  const userId = req.params.id;
-  if (req.user._id !== req.params.id) {
-    res.status(404).send("Not your Id");
-  } else {
-    res.render("user_provider", { id: userId });
-  }
-});
+
 // GET / Should get information of all patients for providers
 router.get("/", isAuthenticated, isProvider, async (req, res, next) => {
   const userId = req.user._id;
   try {
     const users = await userDAO.getUsersOfProvider(userId);
-		res.render("users", { type: "Patient information", user: users });
-
+    res.render(
+      "users",
+      { type: "Patient Information", user: users },
+      (err, html) => {
+        if (err) return next(err);
+        res.render("partials/layout", {
+          title: "Reports",
+          content: html,
+        });
+      }
+    );
   } catch (e) {
     next(e);
   }
@@ -40,8 +42,17 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
           .status(404)
           .send("You cannot access users that are not your patients");
       } else {
-		res.render("users", { type: "Patient information", user: user });
-
+        res.render(
+          "users",
+          { type: "Information", user: userInfo },
+          (err, html) => {
+            if (err) return next(err);
+            res.render("partials/layout", {
+              title: "Reports",
+              content: html,
+            });
+          }
+        );
       }
     } else {
       res.status(404).send("Not your Id");
@@ -50,9 +61,17 @@ router.get("/:id", isAuthenticated, async (req, res, next) => {
     try {
       const user = await userDAO.getUser(email);
       const { _id, password, __v, roles, ...userInfo } = user;
-			console.log(userInfo)
-		res.render("users", { type: "Information", user: userInfo });
-
+      res.render(
+        "users",
+        { type: "Information", id: userId, user: userInfo },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Reports",
+            content: html,
+          });
+        }
+      );
     } catch (e) {
       next(e);
     }
@@ -74,9 +93,23 @@ router.put("/:id/provider", isAuthenticated, async (req, res, next) => {
         req.user._id,
         providerId
       );
-      // res.json(updatedProvider);
-			res.render("user_provider", { message: `Your new updated provider is: ${updatedProvider.providerId}`, id: userId, });
-
+			console.log(updatedProvider)
+      res.render(
+        "users",
+        {
+          type: "Information",
+          id: userId,
+					user: updatedProvider,
+          message: `Your new updated provider is: ${updatedProvider.providerId}`,
+        },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Reports",
+            content: html,
+          });
+        }
+      );
     } catch (e) {
       next(e);
     }
