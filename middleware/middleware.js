@@ -30,7 +30,19 @@ const isProvider = async (req, res, next) => {
     if (user.roles.includes("provider")) {
       next();
     } else {
-      res.status(403).render("error", {message: "Not a healthcare provider"});
+			res
+      .status(403)
+      .render(
+        "message",
+        { title: "Access denied", message: "Not a healthcare provider" },
+        (err, html) => {
+          if (err) return next(err);
+          res.render("partials/layout", {
+            title: "Login",
+            content: html,
+          });
+        }
+      );
     }
   } catch (e) {
     next(e);
