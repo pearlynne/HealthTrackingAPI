@@ -8,7 +8,8 @@ const apptSchema = new mongoose.Schema({
   },
 	// Use ISO date for now
   date: { type: Date, required: true }, 
-  name: { type: String},
+  firstName: { type: String},
+  lastName: { type: String},
 	email: { type: String},
   providerId: {
     type: mongoose.Schema.Types.ObjectId,
