@@ -1,175 +1,123 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My HealthTech API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            min-width: 400px;
-						max-width: 600px;
-            margin: auto;
-        }
-        h2 {
-            color: #800000; /* Dark red */
-        }
-        p {
-            margin: 10px 0 5px;
-            /* margin-top: 20px; */
-            font-size: 1.2em;
-        }
-				
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-				.indv-opt {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin: 10px 0 5px;
-        }
-        input[type="text"],
-        input[type="submit"] {
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: calc(100% - 20px);
-        }
-        input[type="submit"] {
-            background-color: #800000; /* Dark red */
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #660000; /* Darker red */
-        }
-				.radio-buttons {
-            display: flex;
-            flex-direction: row;
-						gap: 10px;
-						justify-content: space-evenly;
-				}
-    </style>
-</head>
-<body>
-    <div class="container">
-			<h2>Add a report</h2>
-			<form action="/reports/" method="POST">
-				<label for="date">Enter date: </label>
-						<input type="text" name="date"/>
-			<p>Mood rating: </p>
-					<div class="radio-buttons">
-					<div class="indv-opt">
-						<input type="radio" name="mood" value="0">
-						<label for="1">Negative</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="mood" value="2">
-						<label for="2">Somewhat negative</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="mood" value="3">
-						<label for="3">Neutral</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="mood" value="4">
-						<label for="4">Somewhat positive</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="mood" value="5">
-						<label for="5">Positive</label>
-					</div>
-					</div>
-				<p>Inattentiveness rating: </p>
-					<div class="radio-buttons">
-					<div class="indv-opt">
-						<input type="radio" name="inattentiveness" value="0">
-						<label for="0">Never/Rarely </label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="inattentiveness" value="1">
-						<label for="1">Sometimes</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="inattentiveness" value="2">
-						<label for="2">Often</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="inattentiveness" value="3">
-						<label for="3">Very often</label> 
-					</div>					
-					</div> 
-						<p>Hyperactivity rating: </p>
-					<div class="radio-buttons">
-					<div class="indv-opt">
-						<input type="radio" name="hyperactivity" value="0">
-						<label for="0">Never/Rarely </label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="hyperactivity" value="1">
-						<label for="1">Sometimes</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="hyperactivity" value="2">
-						<label for="2">Often</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="hyperactivity" value="3">
-						<label for="3">Very often</label> 
-					</div>					
-					</div> 
-						<p>Impulsitivity rating: </p>
-					<div class="radio-buttons">
-					<div class="indv-opt">
-						<input type="radio" name="impulsitivity" value="0">
-						<label for="0">Never/Rarely </label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="impulsitivity" value="1">
-						<label for="1">Sometimes</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="impulsitivity" value="2">
-						<label for="2">Often</label>
-					</div>
-					<div class="indv-opt">
-						<input type="radio" name="impulsitivity" value="3">
-						<label for="3">Very often</label> 
-					</div>					
-					</div> 
-						<label for="journalEntry">Journal Entry:</label>
-							<input type="text" id="journalEntry" name="journalEntry" value="none"><br>
-						<label for="medRxn">Reactions to medication:</label>
-							<input type="text" id="medRxn" name="medRxn" value="none"><br>
-						<input type="submit"/>
-		</div>
- 		</form>
-	</body>
-</html>
+<div class="container">
+<h2>To view or modify individual reports</h2>
+			<form action="/reports/modify" method="GET">
+					<label for="query">Enter Report Id: </label>
+							<input type="text" name="query" />
+				<input type="submit"/>
+				</form>
+<h2>{{message}}</h2>
+	{{#report}}
+		{{#.}}
+			<ul>
+			<hr>
+				<li><h3>{{firstName}} {{lastName}}'s Information </h3>
+					<ul>
+						<li>Name: {{firstName}} <br></li>
+						<li>Email: {{email}} <br></li>
+						<ul>
+							<li><u><h3>Date: {{date}} <h3></u></li>
+							<h3>Ratings</h3>
+							<li>Mood: {{mood}} <br></li>
+							<li>Inattentiveness: {{inattentiveness}} <br></li>
+							<li>Hyperactivity: {{hyperactivity}}<br></li>
+							<li>Impulsivity: {{impulsivity}}<br></li>
+							<h3>Entries</h3>
+							<li>Journal Entry: {{journalEntry}}<br></li>
+							<li>Medication Reactions: {{medRxn}}<br></li>
+						</ul>				
+					</ul>
+				</li>
+			</ul>
+		{{/.}}
+	{{/report}}
+	<h2>Add a report</h2>
+	<form action="/reports/" method="POST">
+		<label for="date">Enter date: </label>
+				<input type="text" name="date"/>
+		<p>Mood rating: </p>
+			<div class="radio-buttons">
+				<div class="indv-opt">
+					<input type="radio" name="mood" value="0">
+					<label for="1">Negative</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="mood" value="2">
+					<label for="2">Somewhat negative</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="mood" value="3">
+					<label for="3">Neutral</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="mood" value="4">
+					<label for="4">Somewhat positive</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="mood" value="5">
+					<label for="5">Positive</label>
+				</div>
+			</div>
+		<p>Inattentiveness rating: </p>
+			<div class="radio-buttons">
+				<div class="indv-opt">
+					<input type="radio" name="inattentiveness" value="0">
+					<label for="0">Never/Rarely </label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="inattentiveness" value="1">
+					<label for="1">Sometimes</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="inattentiveness" value="2">
+					<label for="2">Often</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="inattentiveness" value="3">
+					<label for="3">Very often</label> 
+				</div>					
+			</div> 
+		<p>Hyperactivity rating: </p>
+			<div class="radio-buttons">
+				<div class="indv-opt">
+					<input type="radio" name="hyperactivity" value="0">
+					<label for="0">Never/Rarely </label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="hyperactivity" value="1">
+					<label for="1">Sometimes</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="hyperactivity" value="2">
+					<label for="2">Often</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="hyperactivity" value="3">
+					<label for="3">Very often</label> 
+				</div>					
+			</div> 
+		<p>Impulsivity rating: </p>
+			<div class="radio-buttons">
+				<div class="indv-opt">
+					<input type="radio" name="impulsivity" value="0">
+					<label for="0">Never/Rarely </label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="impulsivity" value="1">
+					<label for="1">Sometimes</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="impulsivity" value="2">
+					<label for="2">Often</label>
+				</div>
+				<div class="indv-opt">
+					<input type="radio" name="impulsivity" value="3">
+					<label for="3">Very often</label> 
+				</div>					
+			</div> 
+		<label for="journalEntry">Journal Entry:</label>
+			<input type="text" id="journalEntry" name="journalEntry" value="none"><br>
+		<label for="medRxn">Reactions to medication:</label>
+			<input type="text" id="medRxn" name="medRxn" value="none"><br>
+		<input type="submit"/>
+	</form>
+</div>

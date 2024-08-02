@@ -1,80 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to My HealthTech API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            min-width: 400px;
-						max-width: 600px;
-            margin: auto;
-        }
-        h2 {
-            color: #800000; /* Dark red */
-        }
-        p {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        label {
-            margin: 10px 0 5px;
-        }
-        input[type="text"],
-        input[type="submit"] {
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: calc(100% - 20px);
-        }
-        input[type="submit"] {
-            background-color: #800000; /* Dark red */
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #660000; /* Darker red */
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-		<h2>Reports</h2>
-		
+ <div class="container">
+		<h2>Reports</h2>		
 				<form action="/reports/search" method="GET">
 					<label for="query">Enter search terms (separated by commas): </label>
 							<input type="text" name="query" placeholder="tired, stressed" />
 				<input type="submit"/>
 				</form>
-	</div>
-	</body>
-</html>
+	</div>x

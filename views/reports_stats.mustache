@@ -1,0 +1,28 @@
+
+<div class="container">
+			<h2>Reports</h2>
+				<form action="/reports/stats" method="GET">
+					<label for="query">Enter Id for individual stats (separated by commas): </label>
+							<input type="text" name="query"/>
+				<input type="submit"/>
+				</form>
+			{{#report}}
+				{{#.}}
+				<ul> 
+				<li><h3>{{firstName}} {{lastName}}'s Information </h3>
+				<ul>
+					<li>First Name: {{firstName}} <br></li>
+					<li>Last Name: {{lastName}} <br></li>
+					<br>
+					<li>Email: {{email}} <br></li>
+					<h3>Statistics of ratings</h3>
+					<li>Mood: {{averageMood}} <br></li>
+					<li>Inattentiveness: {{Inattentiveness}} <br></li>
+					<li>Hyperactivity: {{Hyperactivity}}<br></li>
+					<li>Impulsivity: {{Impulsivity}}<br></li>
+					</ul>
+					</li>
+				</ul>
+				{{/.}}
+			{{/report}}
+		</div>
