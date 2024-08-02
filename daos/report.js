@@ -34,53 +34,52 @@ module.exports.getReportById = async (userId, reportId, isProvider) => {
 // Sort by date and person
 module.exports.getReports = async (userId, isProvider) => {
   return isProvider
-    ? await  
-      Report.aggregate([
-				{ $match: { providerId: new mongoose.Types.ObjectId(userId) } },
-				{
-					$group: {
-						_id: "$userId",
-						firstName: { $addToSet: "$firstName" },
-						lastName: { $addToSet: "$lastName" },
-						email: { $addToSet: "$email" },
-						reports: {
-							$push: {
-								date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
-								mood: "$mood",
-								inattentiveness: "$inattentiveness",
-								hyperactivity: "$hyperactivity",
-								impulsivity: "$impulsivity",
-								journalEntry: "$journalEntry",
-								medRxn: "$medRxn",
-							},
-						},
-					},
-				},{ $sort: {firstName: 1}}
-			])
+    ? await Report.aggregate([
+        { $match: { providerId: new mongoose.Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: "$userId",
+            firstName: { $addToSet: "$firstName" },
+            lastName: { $addToSet: "$lastName" },
+            email: { $addToSet: "$email" },
+            reports: {
+              $push: {
+                date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
+                mood: "$mood",
+                inattentiveness: "$inattentiveness",
+                hyperactivity: "$hyperactivity",
+                impulsivity: "$impulsivity",
+                journalEntry: "$journalEntry",
+                medRxn: "$medRxn",
+              },
+            },
+          },
+        },
+        { $sort: { firstName: 1 } },
+      ])
     : await Report.aggregate([
-			{ $match: { userId: new mongoose.Types.ObjectId(userId) } },
-			{
-				$group: {
-					_id: "$userId",
-					firstName: { $addToSet: "$firstName" },
-					lastName: { $addToSet: "$lastName" },
-					email: { $addToSet: "$email" },
-					reports: {
-						$push: {
-							date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
-							mood: "$mood",
-							inattentiveness: "$inattentiveness",
-							hyperactivity: "$hyperactivity",
-							impulsivity: "$impulsivity",
-							journalEntry: "$journalEntry",
-							medRxn: "$medRxn",
-						},
-					},
-				},
-			}
-		])
+        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: "$userId",
+            firstName: { $addToSet: "$firstName" },
+            lastName: { $addToSet: "$lastName" },
+            email: { $addToSet: "$email" },
+            reports: {
+              $push: {
+                date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
+                mood: "$mood",
+                inattentiveness: "$inattentiveness",
+                hyperactivity: "$hyperactivity",
+                impulsivity: "$impulsivity",
+                journalEntry: "$journalEntry",
+                medRxn: "$medRxn",
+              },
+            },
+          },
+        },
+      ]);
 };
-
 
 // Get all reports for given user based on search terms
 module.exports.getReportsBySearchTerm = async (
@@ -94,56 +93,68 @@ module.exports.getReportsBySearchTerm = async (
       //   { score: { $meta: "textScore" } },
       //   { projection: { userId: 0, providerId: 0, __v: 0 } }
       // ).sort({ name: 1 })
-			Report.aggregate([
-				{ $match: { providerId: new mongoose.Types.ObjectId(userId), $text: { $search: searchTerms } } },
-				{
-					$group: {
-						_id: "$userId",
-						name: { $first: "$name" },
-						email: { $first: "$email" },
-						reports: {
-							$push: {
-								date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
-								mood: "$mood",
-								inattentiveness: "$inattentiveness",
-								hyperactivity: "$hyperactivity",
-								impulsivity: "$impulsivity",
-								journalEntry: "$journalEntry",
-								medRxn: "$medRxn",
-							}
-						}
-					}
-				},{ $sort: {name: 1}}
-			])
+      Report.aggregate([
+        {
+          $match: {
+            providerId: new mongoose.Types.ObjectId(userId),
+            $text: { $search: searchTerms },
+          },
+        },
+        {
+          $group: {
+            _id: "$userId",
+            firstName: { $first: "$firstName" },
+            lastName: { $first: "$lastName" },
+            email: { $first: "$email" },
+            reports: {
+              $push: {
+                date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
+                mood: "$mood",
+                inattentiveness: "$inattentiveness",
+                hyperactivity: "$hyperactivity",
+                impulsivity: "$impulsivity",
+                journalEntry: "$journalEntry",
+                medRxn: "$medRxn",
+              },
+            },
+          },
+        },
+        { $sort: { name: 1 } },
+      ])
     : await //Report.find(
       //   { userId: userId, $text: { $search: searchTerms } },
       //   { score: { $meta: "textScore" } },
       //   { projection: { userId: 0, providerId: 0, __v: 0 } }
       // ).sort({ name: 1 });
-			Report.aggregate([
-				{ $match: { userId: new mongoose.Types.ObjectId(userId), $text: { $search: searchTerms } } },
-				{
-					$group: {
-						_id: "$userId",
-						name: { $first: "$name" },
-						email: { $first: "$email" },
-						reports: {
-							$push: {
-								date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
-								mood: "$mood",
-								inattentiveness: "$inattentiveness",
-								hyperactivity: "$hyperactivity",
-								impulsivity: "$impulsivity",
-								journalEntry: "$journalEntry",
-								medRxn: "$medRxn",
-							}
-						}
-					}
-				},{ $sort: {name: 1}}
-			])
+      Report.aggregate([
+        {
+          $match: {
+            userId: new mongoose.Types.ObjectId(userId),
+            $text: { $search: searchTerms },
+          },
+        },
+        {
+          $group: {
+            _id: "$userId",
+            firstName: { $first: "$firstName" },
+            lastName: { $first: "$lastName" },
+            email: { $first: "$email" },
+            reports: {
+              $push: {
+                date: { $dateToString: { format: "%d-%b-%Y", date: "$date" } },
+                mood: "$mood",
+                inattentiveness: "$inattentiveness",
+                hyperactivity: "$hyperactivity",
+                impulsivity: "$impulsivity",
+                journalEntry: "$journalEntry",
+                medRxn: "$medRxn",
+              },
+            },
+          },
+        },
+        { $sort: { name: 1 } },
+      ]);
 };
-
-
 
 // Get stats for mood and symptom from all reports for given user
 module.exports.getReportStats = async (userId, isProvider) => {
@@ -154,7 +165,8 @@ module.exports.getReportStats = async (userId, isProvider) => {
           $group: {
             _id: "$userId",
             email: { $first: "$email" },
-            name: { $first: "$name" },
+            firstName: { $first: "$firstName" },
+            lastName: { $first: "$lastName" },
             averageMood: { $avg: "$mood" },
             Inattentiveness: { $avg: "$inattentiveness" },
             Hyperactivity: { $avg: "$hyperactivity" },
@@ -169,7 +181,8 @@ module.exports.getReportStats = async (userId, isProvider) => {
           $group: {
             _id: "$userId",
             email: { $first: "$email" },
-            name: { $first: "$name" },
+            firstName: { $first: "$firstName" },
+            lastName: { $first: "$lastName" },
             averageMood: { $avg: "$mood" },
             Inattentiveness: { $avg: "$inattentiveness" },
             Hyperactivity: { $avg: "$hyperactivity" },
@@ -190,23 +203,15 @@ module.exports.getReportStatsByUserId = async (providerId, userId) => {
     {
       $group: {
         _id: "$userId",
+        email: { $first: "$email" },
+        firstName: { $first: "$firstName" },
+        lastName: { $first: "$lastName" },
         averageMood: { $avg: "$mood" },
         Inattentiveness: { $avg: "$inattentiveness" },
         Hyperactivity: { $avg: "$hyperactivity" },
         Impulsivity: { $avg: "$impulsivity" },
       },
     },
-    {
-      $lookup: {
-        from: "users",
-        localField: "_id",
-        foreignField: "_id",
-        pipeline: [{ $project: { name: 1, email: 1 } }],
-        as: "Patient",
-      },
-    },
-    { $unwind: "$Patient" },
-    { $unset: ["_id", "Patient._id"] },
   ]);
 };
 

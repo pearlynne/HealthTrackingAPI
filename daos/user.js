@@ -45,14 +45,14 @@ module.exports.getUsersOfProvider = async (userId, patientId) => {
           _id: new mongoose.Types.ObjectId(patientId),
         },
       },
-      { $project: { _id: 0, name: 1, email: 1 } },
+      { $project: { _id: 0, firstName: 1, lastName: 1, email: 1 } },
     ]);
   } else {
     return await User.aggregate([
       { $match: { providerId: new mongoose.Types.ObjectId(userId) } },
-      { $project: { _id: 0, name: 1, email: 1 } },
+      { $project: { _id: 0, firstName: 1, lastName: 1, email: 1 } },
 
-      { $sort: { name: 1 } },
+      { $sort: { firstName: 1, lastName: 1 } },
     ]);
   }
 };
@@ -70,7 +70,7 @@ module.exports.updateUserProvider = async (userId, providerId) => {
   return await User.findOneAndUpdate(
     { _id: userId },
     { providerId: providerId },
-    { new: true, projection: { name: 1, email: 1, providerId: 1 } }
+    { new: true, projection: { firstName: 1, lastName:1,  email: 1, providerId: 1 } }
   );
 };
 
