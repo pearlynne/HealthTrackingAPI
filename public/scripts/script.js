@@ -2,8 +2,8 @@ function setupFieldValidation(form) {
   const fields = form.querySelectorAll(".form-field");
   fields.forEach((field) => {
     field.addEventListener("input", () => {
-      field.setCustomValidity(""); // Clear custom validity on input
-      form.reportValidity(); // Trigger browser validation
+      field.setCustomValidity(""); 
+      form.reportValidity(); 
     });
   });
 }
@@ -34,7 +34,6 @@ function handleSignUpFormSubmission(event) {
   const lastNameEl = document.getElementById("lastName");
   const emailEl = document.getElementById("email");
 
-  // Clear any existing custom validity messages
   passwordElement.setCustomValidity("");
   confirmPasswordElement.setCustomValidity("");
 
