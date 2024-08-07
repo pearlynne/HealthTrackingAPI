@@ -31,7 +31,7 @@ router.get("/login", (req, res, next) => {
   });
 });
 
-router.get("/password", (req, res, next) => {
+router.get("/password", isAuthenticated, (req, res, next) => {
   res.render("auth_password", {}, (err, html) => {
     if (err) return next(err);
 
@@ -50,20 +50,7 @@ router.post("/signup", async (req, res, next) => {
     !req.body.lastName ||
     JSON.stringify(req.body) === "{}"
   ) {
-		res
-      .status(400)
-      .render(
-        "message",
-        { title: "Error", message: "Incomplete information" },
-        (err, html) => {
-          if (err) return next(err);
-
-          res.render("partials/layout", {
-            title: "Sign up",
-            content: html,
-          });
-        }
-      );
+    res.status(400).json({ success: false, message: "Missing fields" });
   } else {
     try {
       const { firstName, lastName, email, password, roles } = req.body;
@@ -75,7 +62,7 @@ router.post("/signup", async (req, res, next) => {
         hash,
         roles
       );
-      res.json(newUser);
+      res.status(200).json({ success: true, redirectUrl: "/auth/login/" });
     } catch (e) {
       if (e instanceof userDAO.BadDataError) {
         res.status(409).send(e.message);
@@ -87,42 +74,25 @@ router.post("/signup", async (req, res, next) => {
 
 router.post("/login", async (req, res, next) => {
   const { email, password } = req.body;
+
   if (!email || !password || JSON.stringify(req.body) === "{}") {
-
-    res
-      .status(400)
-      .render(
-        "message",
-        { title: "Error", message: "Email/password needed" },
-        (err, html) => {
-          if (err) return next(err);
-
-          res.render("partials/layout", {
-            title: "Login",
-            content: html,
-          });
-        }
-      );
+    res.status(400).json({
+      success: false,
+      redirectUrl: "/auth/login/",
+      message: "Email/Password needed",
+    });
   } else {
     try {
       const user = await userDAO.getUser(email);
       if (!user) {
-        // res.status(401).send("User account does not exist");
-        res.status(401).render(
-          "message",
-          { title: "Error",
-						message: "User account does not exist" },
-          (err, html) => {
-            if (err) return next(err);
-
-            res.render("partials/layout", {
-              title: "Login",
-              content: html,
-            });
-          }
-        );
+        res.status(400).json({
+          success: false,
+          redirectUrl: "/auth/login/",
+          message: "No such user",
+        });
       }
       const passwordMatch = await bcrypt.compare(password, user.password);
+
       if (passwordMatch) {
         let data = {
           name: user.name,
@@ -132,21 +102,13 @@ router.post("/login", async (req, res, next) => {
           _id: user._id,
         };
         token = jwt.sign(data, secret);
-        res.redirect("/reports/");
+        res.json({ success: true, redirectUrl: "/reports/" });
       } else {
-        res.status(401).render(
-          "message",
-          { title: "Error",
-						message: "Password does not match" },
-          (err, html) => {
-            if (err) return next(err);
-
-            res.render("partials/layout", {
-              title: "Login",
-              content: html,
-            });
-          }
-        );
+        res.status(400).json({
+          success: false,
+          redirectUrl: "/auth/login/",
+          message: "Incorrect password",
+        });
       }
     } catch (e) {
       next(e);
@@ -155,39 +117,55 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.put("/password", isAuthenticated, async (req, res, next) => {
-  const { password } = req.body;
-  if (!password || JSON.stringify(req.body) === "{}") {
-    // res.status(400).send("New password needed");
-    res
-      .status(400)
-      .render("message", { title: "Error",
-				message: "New password needed" }, (err, html) => {
-        if (err) return next(err);
+  const { oldPassword, newPassword, repeatPassword } = req.body;
 
-        res.render("partials/layout", {
-          title: "Login",
-          content: html,
-        });
-      });
+  if (
+    !oldPassword ||
+    !newPassword ||
+    !repeatPassword ||
+    JSON.stringify(req.body) === "{}"
+  ) {
+    res.status(400).json({
+      success: false,
+      redirectUrl: "/auth/password/",
+      message: "Missing fields",
+    });
   } else {
     try {
-      const newHash = await bcrypt.hash(password, 5);
-      const updatedPassword = await userDAO.updateUserPassword(
-        req.user._id,
-        newHash
-      );
-      // res.json(updatedPassword);
-			res
-      .render("message", { title: "Success!",
-				message: "Password Updated" }, (err, html) => {
-        if (err) return next(err);
-
-        res.render("partials/layout", {
-          title: "Password",
-          content: html,
+      const user = await userDAO.getUser(req.user.email);
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!passwordMatch) {
+        res.status(400).json({
+          success: false,
+          redirectUrl: "/auth/password/",
+          message: "Incorrect Password",
         });
-      });
-			
+      } else {
+				const newHash = await bcrypt.hash(newPassword, 5);
+				const updatedPassword = await userDAO.updateUserPassword(
+					req.user._id,
+					newHash
+				);
+	
+				res.status(200).json({
+					success: true,
+					redirectUrl: "/profile/",
+					message: "Password Updated",
+				});
+			}
+
+      // res.render(
+      //   "message",
+      //   { title: "Success!", message: "Password Updated" },
+      //   (err, html) => {
+      //     if (err) return next(err);
+
+      //     res.render("partials/layout", {
+      //       title: "Password",
+      //       content: html,
+      //     });
+      //   }
+      // );
     } catch (e) {
       next(e);
     }
