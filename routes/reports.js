@@ -7,6 +7,7 @@ const { isAuthenticated } = require("../middleware/middleware");
 router.get("/modify", isAuthenticated, async (req, res, next) => {
   res.redirect(`/reports/${req.query.query}`);
 });
+
 // Mustache: Comment out for tests
 router.get("/",  isAuthenticated, (req, res, next) => {
   res.render("reports_post", {}, (err, html) => {
@@ -72,9 +73,9 @@ router.get("/data", isAuthenticated, async (req, res, next) => {
     const reports = await reportDAO.getReports(user._id, isProvider);
 
     if (reports.length === 0) {
-      return res.status(404).json({ message: "There are no reports" });
+       res.status(404).json({ message: "There are no reports" });
     } else {
-      return res.json(reports);
+       res.json(reports);
     }
   } catch (e) {
     next(e);
@@ -134,7 +135,6 @@ router.get("/stats", isAuthenticated, async (req, res, next) => {
         user._id,
         req.query.query
       );
-      console.log(stats);
       if (stats.length === 0) {
         res
           .status(404)
