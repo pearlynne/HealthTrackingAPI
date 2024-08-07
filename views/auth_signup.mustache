@@ -1,21 +1,28 @@
 
 <div class="container">
 	<h2>Sign up for an account</h2>	
-	<form action="/auth/signup" method="POST">
+	<form action="/auth/signup" id="signup-form" method="POST">
 		<label for="firstName">Enter First Name: </label>
-		<input type="text" name="firstName" placeholder="First Name" /><br>
+		<input type="text" class="form-field" id="firstName" name="firstName" placeholder="First Name" /><br>
+		
 		<label for="lastName">Enter Last Name: </label>
-		<input type="text" name="lastName" placeholder="Last Name" /><br>
+		<input type="text" class="form-field" id="lastName" name="lastName" placeholder="Last Name" /><br>
+		
 		<label for="contactNum">Enter Contact Number: </label>
-		<input type="text" name="contactNum" placeholder="Optional" /><br>
+		<input type="text" class="form-field" id="contactNum" name="contactNum" placeholder="Optional" /><br>
+		
 		<label for="email">Enter Email: </label>
-		<input type="text" name="email" placeholder="Email" /><br>
-		<label for="password">Enter password: </label>
-		<input type="text" name="password" placeholder="Password" /><br>
-		<label for="verifyPassword">Enter password again: </label>
-		<input type="text" name="verifyPassword" placeholder="Password" /><br>
-		<input type="checkbox" id="roles" name="roles" value="provider">
+		<input type="email" class="form-field" id="email" name="email" placeholder="Email" /><br>
+		
+		<label for="signupPassword">Enter password: </label>
+		<input type="password" class="form-field" id="signupPassword" name="signupPassword" placeholder="Password" /><br>
+		
+		<label for="confirmPassword">Enter password again: </label>
+		<input type="password" class="form-field" id="confirmPassword" name="confirmPassword" placeholder="Password" /><br>
+		
+		<input type="checkbox" class="form-field" id="roles" name="roles" value="provider">
 		<label for="roles">I am a provider</label><br> 
+		
 		<input type="submit"/>
 	</form>
 </div>

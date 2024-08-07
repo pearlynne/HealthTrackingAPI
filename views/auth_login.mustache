@@ -1,10 +1,10 @@
 <div class="container">
 	<h2>Log into your account</h2>
-			<form action="/auth/login" method="POST">
+			<form action="/auth/login" id="login-form" method="POST">
 				<label for="email">Enter Email: </label>
-						<input type="text" name="email" placeholder="Email" /><br>
+						<input type="email" class="form-field" id="email" name="email" placeholder="Email" /><br>
 				<label for="password">Enter password: </label>
-						<input type="text" name="password" placeholder="password" /><br>
+						<input type="password" class="form-field" id="password" name="password" placeholder="password"/><br>
 				<input type="submit"/>
 			</form>
 </div>
