@@ -1,29 +1,34 @@
 <nav class="navbar">
-    <ul>
-        <li class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Reports</a>
-            <div class="dropdown-content">
-                <a href="/reports">Create Reports</a>
-                <a href="/reports/all">View Reports</a>
-                <a href="/reports">Edit reports</a>
-                <a href="/reports/search">Search Reports</a>
-                <a href="/reports/stats">Report Stats</a>
-            </div>
-        </li>
-        <li class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Appointments</a>
-            <div class="dropdown-content">
-                <a href="/appointments">View Appointments</a>
-                <a href="/appointments/create">Create Appointments (Provider only)</a>
-                <a href="/appointments/">Edit Appointments (Provider only)</a> 
-            </div>
-        </li>
-        <li class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Profile</a>
-            <div class="dropdown-content">
-                <a href="/profile">View User Profile</a>
-                <a href="/auth/password">Change Password</a>
-            </div>
-        </li>
+    <ul class="navbar-menu">
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn">Reports</a>
+          <ul>
+						<li class="dropdown-content"><a href="/reports">Create Reports</a></li>
+						<li class="dropdown-content"><a href="/reports/all">View Reports</a></li>
+						<li class="dropdown-content"><a href="/reports">Edit Reports</a></li>
+						<li class="dropdown-content"><a href="/reports/search">Search Reports</a></li>
+						<li class="dropdown-content"><a href="/reports/stats">Report Stats</a></li>
+					</ul>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn">Appointments</a>
+          <ul>
+						<li class="dropdown-content"><a href="/appointments">View Appointments</a></li>
+						<li class="dropdown-content"><a href="/appointments/create">Create Appointments (Provider only)</a></li>
+						<li class="dropdown-content"><a href="/appointments">Edit Appointments (Provider only)</a></li>
+					</ul>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn">Profile</a>
+          <ul>
+						<li class="dropdown-content"><a href="/profile">View User Profile</a></li>
+						<li class="dropdown-content"><a href="/auth/password">Change Password</a></li>
+					</ul>
+      </li>
     </ul>
-</nav>
+		<div class="access-menu">
+			<a href="/auth/signup" id="signup-btn" class="dropbtn">Sign up</a>
+			<a href="/auth/login" id="login-btn" class="dropbtn">Log in</a>
+			<a href="/auth/logout" id="logout-btn" class="hidden dropbtn">Log out</a>
+			<div>
+  </nav>
