@@ -1,11 +1,11 @@
 <div class="container">
-<h2>To view or modify individual reports</h2>
-			<form action="/reports/modify" method="GET">
-					<label for="query">Enter Report Id: </label>
-							<input type="text" name="query" />
-				<input type="submit"/>
-				</form>
-<h2>{{message}}</h2>
+	<h2>To view or modify individual reports</h2>
+	<form action="/reports/modify" method="GET">
+		<label for="query">Enter Report Id: </label>
+		<input type="text" name="query" />
+		<input type="submit"/>
+	</form>
+	<h2>{{message}}</h2>
 	{{#report}}
 		{{#.}}
 			<ul>
